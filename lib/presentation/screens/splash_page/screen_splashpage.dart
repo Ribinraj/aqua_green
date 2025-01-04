@@ -42,9 +42,9 @@ class _ScreenSplashPageState extends State<ScreenSplashPage> {
               ),
             ),
             ResponsiveSizedBox.height20,
-            SpinKitThreeBounce(
-              color: Appcolors.kprimarycolor,
-              size: ResponsiveUtils.wp(5),
+            SpinKitCircle(
+              color: Appcolors.kgreenColor,
+              size: ResponsiveUtils.wp(10),
             )
           ],
         ),

@@ -1,26 +1,23 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
+import 'package:aqua_green/presentation/screens/signin_page/screen_signinpage.dart';
 
-import 'package:aqua_green/presentation/blocs/cubit/toggle_password_cubit.dart';
-import 'package:aqua_green/presentation/screens/mainpage/screen_mainpage.dart';
-import 'package:aqua_green/presentation/screens/screen_otp_page/screen_otppage.dart';
-import 'package:aqua_green/presentation/screens/screen_reset_password/screen_reset_passwordpage.dart';
-import 'package:aqua_green/presentation/screens/signin_page/widgets/toggle_passwordwidget.dart';
 import 'package:aqua_green/presentation/widgets/custom_logintextfield.dart';
 import 'package:aqua_green/presentation/widgets/custom_navigator.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ScreenSigninPage extends StatefulWidget {
-  const ScreenSigninPage({super.key});
+import 'package:flutter/material.dart';
+
+class ScreenResetPasswordpage extends StatefulWidget {
+  const ScreenResetPasswordpage({super.key});
 
   @override
-  State<ScreenSigninPage> createState() => _ScreenSigninPageState();
+  State<ScreenResetPasswordpage> createState() => _ScreenSigninPageState();
 }
 
-class _ScreenSigninPageState extends State<ScreenSigninPage> {
-  final TextEditingController mobilenumberController = TextEditingController();
+class _ScreenSigninPageState extends State<ScreenResetPasswordpage> {
+  final TextEditingController confirompasswordController =
+      TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -36,7 +33,7 @@ class _ScreenSigninPageState extends State<ScreenSigninPage> {
                 height: ResponsiveUtils.hp(7),
               ),
               Container(
-                height: ResponsiveUtils.hp(32),
+                height: ResponsiveUtils.hp(30),
                 //width: ResponsiveUtils.hp(20),
                 decoration: const BoxDecoration(
                     color: Appcolors.kwhiteColor, shape: BoxShape.circle
@@ -59,8 +56,9 @@ class _ScreenSigninPageState extends State<ScreenSigninPage> {
                   ),
                 ),
               ),
+              ResponsiveSizedBox.height20,
               const Text(
-                'Login',
+                'Reset Password',
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -68,49 +66,55 @@ class _ScreenSigninPageState extends State<ScreenSigninPage> {
               ),
               ResponsiveSizedBox.height30,
               TextStyles.body(
-                  text: 'Mobile Number', color: Appcolors.kblackColor),
-              ResponsiveSizedBox.height10,
-              CustomTextfield(
-                controller: mobilenumberController,
-                labelText: 'Mobile Number',
-              ),
-              ResponsiveSizedBox.height20,
-              TextStyles.body(text: 'Password', color: Appcolors.kblackColor),
+                  text: 'New Passoword', color: Appcolors.kblackColor),
               ResponsiveSizedBox.height10,
               CustomTextfield(
                 controller: passwordController,
-                labelText: 'Password',
-                obscureText: !context
-                    .watch<TogglePasswordCubit>()
-                    .state
-                    .isPasswordVisible,
-                suffixIcon: togglePassword(),
-              ),
-              ResponsiveSizedBox.height5,
-              Row(
-                children: [
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      CustomNavigation.replace(context, ScreenOtppage());
-                    },
-                    child: TextStyles.medium(
-                        text: 'Forgot Password?',
-                        weight: FontWeight.bold,
-                        color: Appcolors.kprimarycolor),
-                  ),
-                ],
+                labelText: 'Enter new password',
               ),
               ResponsiveSizedBox.height20,
-              GestureDetector(
-                onTap: () {},
-                child: SubmitButton(
-                    ontap: () {
-                      CustomNavigation.replace(context, ScreenMainPage());
-                    },
-                    text: 'Login'),
-              )
+              TextStyles.body(
+                  text: 'Confirm Password', color: Appcolors.kblackColor),
+              ResponsiveSizedBox.height10,
+              CustomTextfield(
+                controller: passwordController,
+                labelText: 'Confirm Password',
+              ),
+              ResponsiveSizedBox.height30,
+              SubmitButton(
+                  ontap: () {
+                    CustomNavigation.replace(context, const ScreenSigninPage());
+                  },
+                  text: 'Submit')
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SubmitButton extends StatelessWidget {
+  const SubmitButton({
+    super.key,
+    required this.ontap,
+    required this.text,
+  });
+  final void Function() ontap;
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: ontap,
+      child: Container(
+        height: ResponsiveUtils.hp(6),
+        width: ResponsiveUtils.screenWidth,
+        color: Appcolors.kprimarycolor,
+        child: Center(
+          child: TextStyles.body(
+            text: text,
+            weight: FontWeight.bold,
+            color: Appcolors.kwhiteColor,
           ),
         ),
       ),

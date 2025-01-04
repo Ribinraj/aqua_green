@@ -60,7 +60,7 @@ class TextStyles {
   static ResponsiveText body({String? text, FontWeight? weight, Color? color}) {
     return ResponsiveText(
       text ?? '',
-      sizeFactor: 1, // base size
+      sizeFactor: .9, // base size
       weight: weight,
       color: color,
     );
