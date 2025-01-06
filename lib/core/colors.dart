@@ -18,5 +18,5 @@ class Appcolors {
   static const kredColor = Colors.red;
  static const kgreenColor = Color.fromARGB(255, 32, 210, 26);
   static const kbackgroundcolor = Color.fromARGB(255, 234, 244, 249);
-  static const kbluecolor = Color.fromARGB(255, 49, 155, 248);
+  static const kdarkbluecolor =Color.fromRGBO(22, 35, 155, 0.929);
 }

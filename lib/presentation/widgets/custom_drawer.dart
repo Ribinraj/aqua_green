@@ -42,7 +42,7 @@ class CustomDrawer extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.track_changes),
           title: TextStyles.body(
-            text: 'Add Measure',
+            text: 'Measure',
             weight: FontWeight.w600,
           ),
           onTap: () {},
@@ -50,7 +50,7 @@ class CustomDrawer extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.bar_chart),
           title: TextStyles.body(
-            text: 'View Report',
+            text: 'Report',
             weight: FontWeight.w600,
           ),
           onTap: () {},

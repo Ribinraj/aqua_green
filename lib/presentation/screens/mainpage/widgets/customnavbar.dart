@@ -89,14 +89,14 @@ class BottomNavigationWidget extends StatelessWidget {
               context,
               index: 1,
               icon: Icons.track_changes,
-              label: 'Add Measure',
+              label: 'Measure',
               isSelected: state.currentPageIndex == 1,
             ),
             _buildNavigationBarItem(
               context,
               index: 2,
               icon: Icons.bar_chart,
-              label: 'View Report',
+              label: 'Report',
               isSelected: state.currentPageIndex == 2,
             ),
             _buildNavigationBarItem(
