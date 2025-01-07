@@ -5,6 +5,7 @@ import 'package:aqua_green/presentation/blocs/image_picker/image_picker_bloc.dar
 import 'package:aqua_green/presentation/screens/screen_reset_password/screen_reset_passwordpage.dart';
 import 'package:aqua_green/presentation/widgets/custom_drawer.dart';
 import 'package:aqua_green/presentation/widgets/custom_imagecontainer.dart';
+import 'package:aqua_green/presentation/widgets/custom_multiimage_container.dart';
 import 'package:aqua_green/presentation/widgets/custom_textfield_addmeasure.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -30,10 +31,27 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
     '9',
     '10',
   ];
+  final List<String> areas = [
+    'Area 1',
+    'Area 2',
+    'Area 3',
+    'Area 4',
+    'Area 5',
+    'Area 6',
+    'Area 7',
+    'Area 8',
+    'Area 9',
+    'Area 10',
+  ];
   final List<String> productflow =
+      List.generate(20, (index) => ((index + 1) * 100).toString());
+  final List<String> sandcarbonfilterPressure =
       List.generate(20, (index) => ((index + 1) * 100).toString());
   final List<String> rejuctflow =
       List.generate(40, (index) => ((index + 1) * 100).toString());
+  final List<String> systempressure =
+      List.generate(15, (index) => (index + 1).toString());
+
   final List<String> yesNoOptions = [
     'Yes',
     'No',
@@ -52,6 +70,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   final TextEditingController tdsController = TextEditingController();
   final TextEditingController waterlittersReadingController =
       TextEditingController();
+  // ignore: non_constant_identifier_names
   final TextEditingController coin_roWateterReadingController =
       TextEditingController();
   final TextEditingController kebmeterReadingController =
@@ -128,7 +147,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                       sandfilterPressureController.text = value!;
                     });
                   },
-                  list: routes),
+                  list: sandcarbonfilterPressure),
               ResponsiveSizedBox.height20,
               TextStyles.medium(
                   text: 'Carbon Filter Pressure',
@@ -143,7 +162,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                       carbonfilterPressureController.text = value!;
                     });
                   },
-                  list: routes),
+                  list: sandcarbonfilterPressure),
               ResponsiveSizedBox.height20,
               TextStyles.medium(
                   text: 'System Pressure',
@@ -158,7 +177,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                       systemPressureController.text = value!;
                     });
                   },
-                  list: routes),
+                  list: systempressure),
               ResponsiveSizedBox.height20,
             ],
           ),
@@ -171,6 +190,12 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
         ResponsiveSizedBox.height5,
         CustomTextfieldaddmeasure(
             textInputType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'TDS cannot be empty';
+              }
+              return null;
+            },
             controller: tdsController,
             hinttext: 'Enter TDS'),
         ResponsiveSizedBox.height20,
@@ -180,6 +205,12 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             color: Appcolors.kdarkbluecolor),
         ResponsiveSizedBox.height5,
         CustomTextfieldaddmeasure(
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Water litters reading cannot be empty';
+              }
+              return null;
+            },
             textInputType: TextInputType.number,
             controller: waterlittersReadingController,
             hinttext: 'Enter Water Litters Reading'),
@@ -190,6 +221,12 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             color: Appcolors.kdarkbluecolor),
         ResponsiveSizedBox.height5,
         CustomTextfieldaddmeasure(
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Coin RO water reading cannot be empty';
+              }
+              return null;
+            },
             textInputType: TextInputType.number,
             controller: coin_roWateterReadingController,
             hinttext: 'Enter coin RO Water Reading'),
@@ -200,9 +237,168 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             color: Appcolors.kdarkbluecolor),
         ResponsiveSizedBox.height5,
         CustomTextfieldaddmeasure(
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'KEB meter reading cannot be empty';
+              }
+              return null;
+            },
             textInputType: TextInputType.number,
             controller: kebmeterReadingController,
             hinttext: 'Enter keb meter Reading'),
+        ResponsiveSizedBox.height20,
+        Container(
+          color: Appcolors.kwhiteColor,
+          padding: EdgeInsets.all(ResponsiveUtils.wp(5)),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Keb Meter Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Meter Image',
+                          height: ResponsiveUtils.hp(15),
+                          width: ResponsiveUtils.wp(35))
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Flow Range Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Flow Range Image',
+                          height: ResponsiveUtils.hp(15),
+                          width: ResponsiveUtils.wp(35))
+                    ],
+                  ),
+                ],
+              ),
+              ResponsiveSizedBox.height20,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Filter Chemical Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Filter Chemical Image',
+                          height: ResponsiveUtils.hp(15),
+                          width: ResponsiveUtils.wp(35))
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Coin Reading Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Coin Reading Image',
+                          height: ResponsiveUtils.hp(15),
+                          width: ResponsiveUtils.wp(35))
+                    ],
+                  ),
+                ],
+              ),
+              ResponsiveSizedBox.height20,
+              TextStyles.body(
+                  text: 'Plant Images',
+                  weight: FontWeight.bold,
+                  color: Appcolors.kprimarycolor),
+              ResponsiveSizedBox.height5,
+              const Divider(
+                thickness: .5,
+                color: Appcolors.kprimarycolor,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Front Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Plant Front Image',
+                          height: ResponsiveUtils.hp(12),
+                          width: ResponsiveUtils.wp(25))
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Back Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Plant Back Image',
+                          height: ResponsiveUtils.hp(12),
+                          width: ResponsiveUtils.wp(25))
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Inside Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Plant Inside Image',
+                          height: ResponsiveUtils.hp(12),
+                          width: ResponsiveUtils.wp(25))
+                    ],
+                  ),
+                ],
+              ),
+              ResponsiveSizedBox.height20,
+              TextStyles.body(
+                  text: 'Additional Images',
+                  weight: FontWeight.bold,
+                  color: Appcolors.kprimarycolor),
+              ResponsiveSizedBox.height5,
+              const Divider(
+                thickness: .5,
+                color: Appcolors.kprimarycolor,
+              ),
+              ResponsiveSizedBox.height20,
+              MultiImagePickerContainer(source: 'Additional Images',containerHeight: ResponsiveUtils.hp(12),
+                          containerWidth: ResponsiveUtils.wp(25))
+            ],
+          ),
+        ),
         ResponsiveSizedBox.height30,
         SubmitButton(
             ontap: () {
@@ -225,59 +421,142 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   Widget buildNoContent() {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextStyles.medium(
-                    text: 'Upload Meter Image',
-                    weight: FontWeight.bold,
-                    color: Appcolors.kdarkbluecolor),
-                ResponsiveSizedBox.height10,
-                // Add your No-specific widgets here
-                ReusableImageContainer(source: 'Meter Image')
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextStyles.medium(
-                    text: 'Upload Plant Image',
-                    weight: FontWeight.bold,
-                    color: Appcolors.kdarkbluecolor),
-                ResponsiveSizedBox.height10,
-                // Add your No-specific widgets here
-                ReusableImageContainer(source: 'Plant Image')
-              ],
-            ),
-          ],
+        Container(
+          color: Appcolors.kwhiteColor,
+          padding: EdgeInsets.all(ResponsiveUtils.wp(6)),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Meter Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Meter Image',
+                          height: ResponsiveUtils.hp(15),
+                          width: ResponsiveUtils.wp(35))
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Plant Front Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Plant Front Image',
+                          height: ResponsiveUtils.hp(15),
+                          width: ResponsiveUtils.wp(35))
+                    ],
+                  ),
+                ],
+              ),
+              ResponsiveSizedBox.height20,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Plant Back Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Plant Back Image',
+                          height: ResponsiveUtils.hp(15),
+                          width: ResponsiveUtils.wp(35))
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextStyles.medium(
+                          text: 'Plant Inside Image',
+                          weight: FontWeight.bold,
+                          color: Appcolors.kdarkbluecolor),
+                      ResponsiveSizedBox.height10,
+                      // Add your No-specific widgets here
+                      ReusableImageContainer(
+                          source: 'Plant Inside Image',
+                          height: ResponsiveUtils.hp(15),
+                          width: ResponsiveUtils.wp(35))
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         ResponsiveSizedBox.height30,
+        // SubmitButton(
+        //   ontap: () {
+        //     if (_formKey.currentState!.validate()) {
+        //       if (!validateCommonFields()) return;
+        //       if (!validateNOImages()) return;
+        //       final imagePickerState = context.read<ImagePickerBloc>().state;
+        //       final meterImageState =
+        //           imagePickerState['Meter Image'] as ImagePickerSuccessState;
+        //       final plantImageState =
+        //           imagePickerState['Plant Image'] as ImagePickerSuccessState;
+
+        //       final meterImage = meterImageState.imageFile;
+        //       final plantImage = plantImageState.imageFile;
+
+        //       debugPrint('Submitting No case with:');
+        //       debugPrint('Route: $selectedRoute');
+        //       debugPrint('Area: $selectedArea');
+        //       debugPrint('Meter Image: ${meterImage!.path}');
+        //       debugPrint('Plant Image: ${plantImage!.path}');
+        //     }
+        //   },
+        //   text: 'Submit',
+        // )
         SubmitButton(
-          ontap: () {
-            if (_formKey.currentState!.validate()) {
-              if (!validateCommonFields()) return;
-              if (!validateImages()) return;
-              final imagePickerState = context.read<ImagePickerBloc>().state;
-              final meterImageState =
-                  imagePickerState['Meter Image'] as ImagePickerSuccessState;
-              final plantImageState =
-                  imagePickerState['Plant Image'] as ImagePickerSuccessState;
+  ontap: () {
+    if (_formKey.currentState!.validate()) {
+      if (!validateCommonFields()) return;
+      if (!validateNOImages()) return;
 
-              final meterImage = meterImageState.imageFile;
-              final plantImage = plantImageState.imageFile;
+      final imagePickerState = context.read<ImagePickerBloc>().state;
+      
+      // Get all images from their respective states
+      final meterImages = (imagePickerState['Meter Image'] as ImagePickerSuccessState).images;
+      final plantFrontImages = (imagePickerState['Plant Front Image'] as ImagePickerSuccessState).images;
+      final plantBackImages = (imagePickerState['Plant Back Image'] as ImagePickerSuccessState).images;
+      final plantInsideImages = (imagePickerState['Plant Inside Image'] as ImagePickerSuccessState).images;
 
-              debugPrint('Submitting No case with:');
-              debugPrint('Route: $selectedRoute');
-              debugPrint('Area: $selectedArea');
-              debugPrint('Meter Image: ${meterImage!.path}');
-              debugPrint('Plant Image: ${plantImage!.path}');
-            }
-          },
-          text: 'Submit',
-        )
+      // Since these are single-image containers, we take the first image
+      final meterImage = meterImages.first;
+      final plantFrontImage = plantFrontImages.first;
+      final plantBackImage = plantBackImages.first;
+      final plantInsideImage = plantInsideImages.first;
+
+      debugPrint('Submitting No case with:');
+      debugPrint('Route: $selectedRoute');
+      debugPrint('Area: $selectedArea');
+      debugPrint('Meter Image: ${meterImage.path}');
+      debugPrint('Plant Front Image: ${plantFrontImage.path}');
+      debugPrint('Plant Back Image: ${plantBackImage.path}');
+      debugPrint('Plant Inside Image: ${plantInsideImage.path}');
+      
+      // Add your submission logic here
+    }
+  },
+  text: 'Submit',
+)
       ],
     );
   }
@@ -299,7 +578,11 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
 
   // Validation function for Yes case
   bool validateYesFields() {
-    if (selectedProductFlow == null || selectedRejectFlow == null) {
+    if (selectedProductFlow == null ||
+        selectedRejectFlow == null ||
+        selectedSandFilterPressure == null ||
+        selectedCarbonFilterPressure == null ||
+        selectedSystemPressure == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please select both Product Flow and Reject Flow'),
@@ -312,27 +595,63 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   }
 
   // Validation function for images in No case
-  bool validateImages() {
-    final imagePickerState = context.read<ImagePickerBloc>().state;
+  // bool validateNOImages() {
+  //   final imagePickerState = context.read<ImagePickerBloc>().state;
 
-    final meterImageState = imagePickerState['Meter Image'];
-    final plantImageState = imagePickerState['Plant Image'];
+  //   final meterImageState = imagePickerState['Meter Image'];
+  //   final plantFrontImageState = imagePickerState['Plant Front Image'];
+  //   final plantBackImageState = imagePickerState['Plant Back Image'];
+  //   final plantInsideImageState = imagePickerState['Plant Inside Image'];
 
-    final hasMeterImage = meterImageState is ImagePickerSuccessState;
-    final hasPlantImage = plantImageState is ImagePickerSuccessState;
+  //   final hasMeterImage = meterImageState is ImagePickerSuccessState;
+  //   final hasPlantFrontImage = plantFrontImageState is ImagePickerSuccessState;
+  //   final hasPlantBackImage = plantBackImageState is ImagePickerSuccessState;
+  //   final hasPlantInsideImage =
+  //       plantInsideImageState is ImagePickerSuccessState;
 
-    if (!hasMeterImage || !hasPlantImage) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please capture both Meter and Plant images'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return false;
-    }
-    return true;
+  //   if (!hasMeterImage ||
+  //       !hasPlantFrontImage ||
+  //       !hasPlantBackImage ||
+  //       !hasPlantInsideImage) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         content: Text('Please capture both Meter and Plant images'),
+  //         backgroundColor: Colors.red,
+  //       ),
+  //     );
+  //     return false;
+  //   }
+  //   return true;
+  // }
+bool validateNOImages() {
+  final imagePickerState = context.read<ImagePickerBloc>().state;
+  final meterImageState = imagePickerState['Meter Image'];
+  final plantFrontImageState = imagePickerState['Plant Front Image'];
+  final plantBackImageState = imagePickerState['Plant Back Image'];
+  final plantInsideImageState = imagePickerState['Plant Inside Image'];
+
+  // Check if states exist and have images
+  final hasMeterImage = meterImageState is ImagePickerSuccessState && 
+                       (meterImageState as ImagePickerSuccessState).images.isNotEmpty;
+  final hasPlantFrontImage = plantFrontImageState is ImagePickerSuccessState && 
+                            (plantFrontImageState as ImagePickerSuccessState).images.isNotEmpty;
+  final hasPlantBackImage = plantBackImageState is ImagePickerSuccessState && 
+                           (plantBackImageState as ImagePickerSuccessState).images.isNotEmpty;
+  final hasPlantInsideImage = plantInsideImageState is ImagePickerSuccessState && 
+                             (plantInsideImageState as ImagePickerSuccessState).images.isNotEmpty;
+
+  if (!hasMeterImage || !hasPlantFrontImage || 
+      !hasPlantBackImage || !hasPlantInsideImage) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Please capture both Meter and Plant images'),
+        backgroundColor: Colors.red,
+      ),
+    );
+    return false;
   }
-
+  return true;
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -348,7 +667,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
         centerTitle: true,
         title: TextStyles.body(
             weight: FontWeight.bold,
-            text: 'Add measurement',
+            text: 'Add measure',
             color: Appcolors.kprimarycolor),
       ),
       drawer: const CustomDrawer(),
@@ -387,7 +706,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                       areaController.text = value!;
                     });
                   },
-                  list: routes),
+                  list: areas),
               ResponsiveSizedBox.height20,
               TextStyles.medium(
                   text: 'Is there Power supply?',
@@ -462,6 +781,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
       dropdownStyleData: DropdownStyleData(
         maxHeight: ResponsiveUtils.hp(50),
         decoration: BoxDecoration(
+          color: Appcolors.kwhiteColor,
           borderRadius: BorderRadius.circular(10),
         ),
       ),
