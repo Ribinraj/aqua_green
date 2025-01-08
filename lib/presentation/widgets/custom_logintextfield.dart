@@ -38,24 +38,23 @@ class CustomTextfield extends StatelessWidget {
           errorMaxLines: 3,
           suffixIcon: suffixIcon,
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
           hintText: labelText,
           hintStyle: const TextStyle(color: Appcolors.kgreyColor, fontSize: 13),
           enabledBorder: const OutlineInputBorder(
               //borderRadius: BorderRadiusStyles.kradius5(),
-              borderSide: BorderSide(color: Appcolors.kgreenColor, width: .5)),
+              borderSide:
+                  BorderSide(color: Appcolors.kprimarycolor, width: .5)),
           focusedBorder: const OutlineInputBorder(
               //borderRadius: BorderRadiusStyles.kradius30(),
               borderSide:
-                  BorderSide(color: Appcolors.kgreenColor, width: .5)),
+                  BorderSide(color: Appcolors.kprimarycolor, width: .5)),
           errorBorder: const OutlineInputBorder(
               //borderRadius: BorderRadiusStyles.kradius30(),
-              borderSide:
-                  BorderSide(color: Appcolors.kredColor, width: .5)),
+              borderSide: BorderSide(color: Appcolors.kredColor, width: .5)),
           focusedErrorBorder: const OutlineInputBorder(
               // borderRadius: BorderRadiusStyles.kradius30(),
-              borderSide:
-                  BorderSide(color: Appcolors.kredColor, width: .5))),
+              borderSide: BorderSide(color: Appcolors.kredColor, width: .5))),
     );
   }
 }

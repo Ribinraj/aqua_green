@@ -2,7 +2,6 @@
 
 import 'package:aqua_green/core/responsive_utils.dart';
 
-
 import 'package:flutter/material.dart';
 
 class ResponsiveText extends StatelessWidget {
@@ -70,7 +69,7 @@ class TextStyles {
       {String? text, FontWeight? weight, Color? color}) {
     return ResponsiveText(
       text ?? '',
-      sizeFactor: .8, // base size
+      sizeFactor: .82, // base size
       weight: weight,
       color: color,
     );

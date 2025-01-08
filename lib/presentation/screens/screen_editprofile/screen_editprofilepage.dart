@@ -1,19 +1,22 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
-import 'package:aqua_green/presentation/screens/screen_editprofile/screen_editprofilepage.dart';
+
 import 'package:aqua_green/presentation/screens/screen_reset_password/screen_reset_passwordpage.dart';
+import 'package:aqua_green/presentation/widgets/custom_logintextfield.dart';
 import 'package:aqua_green/presentation/widgets/custom_navigator.dart';
 import 'package:flutter/material.dart';
 
-class ScreenProfilepage extends StatefulWidget {
-  const ScreenProfilepage({super.key});
+class ScreenEditProfilepage extends StatefulWidget {
+  const ScreenEditProfilepage({super.key});
 
   @override
-  State<ScreenProfilepage> createState() => _ScreenProfilepageState();
+  State<ScreenEditProfilepage> createState() => _ScreenEditProfilepageState();
 }
 
-class _ScreenProfilepageState extends State<ScreenProfilepage> {
+class _ScreenEditProfilepageState extends State<ScreenEditProfilepage> {
+  final TextEditingController mobilenumberController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,66 +53,30 @@ class _ScreenProfilepageState extends State<ScreenProfilepage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextStyles.medium(
-                  text: 'Full Name',
-                  weight: FontWeight.bold,
-                  color: Appcolors.kprimarycolor),
-              ResponsiveSizedBox.height5,
-              nameContainer(text: 'akbar muhammed'),
-              ResponsiveSizedBox.height20,
-              TextStyles.medium(
-                  text: 'User Name',
-                  weight: FontWeight.bold,
-                  color: Appcolors.kprimarycolor),
-              ResponsiveSizedBox.height5,
-              nameContainer(text: 'muhammed akbar'),
-              ResponsiveSizedBox.height20,
-              TextStyles.medium(
                   text: 'Mobile Number',
                   weight: FontWeight.bold,
                   color: Appcolors.kprimarycolor),
               ResponsiveSizedBox.height5,
-              nameContainer(text: '9946802969'),
+              CustomTextfield(
+                  controller: passwordController, labelText: 'Mobile number'),
               ResponsiveSizedBox.height20,
-              Row(
-                children: [
-                  const Spacer(),
-                  TextStyles.medium(
-                      text: 'Logout',
-                      weight: FontWeight.bold,
-                      color: Appcolors.kredColor),
-                  ResponsiveSizedBox.width10,
-                ],
-              )
+              TextStyles.medium(
+                  text: 'Password',
+                  weight: FontWeight.bold,
+                  color: Appcolors.kprimarycolor),
+              ResponsiveSizedBox.height5,
+              CustomTextfield(
+                  controller: passwordController, labelText: 'Password'),
             ],
           ),
         ),
         ResponsiveSizedBox.height30,
         SubmitButton(
             ontap: () {
-              CustomNavigation.push(context,const ScreenEditProfilepage());
+              CustomNavigation.pop(context);
             },
-            text: 'Edit')
+            text: 'Update')
       ],
     ));
-  }
-
-  Container nameContainer({required String text}) {
-    return Container(
-      width: ResponsiveUtils.screenWidth,
-      padding: EdgeInsets.all(ResponsiveUtils.wp(3.5)),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Appcolors.kprimarycolor,
-          width: 0.5,
-        ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-        ),
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
   }
 }
