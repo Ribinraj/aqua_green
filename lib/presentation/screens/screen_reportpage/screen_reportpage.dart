@@ -351,7 +351,7 @@ class _ScreenReportpageState extends State<ScreenReportpage> {
                             Row(
                               children: [
                                 TextStyles.caption(
-                                    text: 'Product Flow Reading : 400',
+                                    text: 'Product Flow : 400',
                                     color: Appcolors.kblackColor,
                                     weight: FontWeight.bold),
                                 Spacer(),
@@ -400,6 +400,27 @@ class _ScreenReportpageState extends State<ScreenReportpage> {
                                         context: context,
                                         heading: 'System pressure',
                                         details: '500'),
+                                    ResponsiveSizedBox.height5,
+                                    const Divider(
+                                      thickness: .5,
+                                      color: Appcolors.kprimarycolor,
+                                    ),
+                                    CustomTextWidget(
+                                        context: context,
+                                        heading: 'Reject Flow',
+                                        details: '150'),
+                                    CustomTextWidget(
+                                        context: context,
+                                        heading: 'TDS',
+                                        details: '100'),
+                                    CustomTextWidget(
+                                        context: context,
+                                        heading: 'Water Ltrs',
+                                        details: '350'),
+                                    CustomTextWidget(
+                                        context: context,
+                                        heading: 'KEB meter',
+                                        details: '34.56'),
                                   ],
                                 ),
                               ),

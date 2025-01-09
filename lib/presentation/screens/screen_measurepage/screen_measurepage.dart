@@ -394,8 +394,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 color: Appcolors.kprimarycolor,
               ),
               ResponsiveSizedBox.height20,
-              MultiImagePickerContainer(source: 'Additional Images',containerHeight: ResponsiveUtils.hp(12),
-                          containerWidth: ResponsiveUtils.wp(25))
+              MultiImagePickerContainer(
+                  source: 'Additional Images',
+                  containerHeight: ResponsiveUtils.hp(12),
+                  containerWidth: ResponsiveUtils.wp(25))
             ],
           ),
         ),
@@ -404,7 +406,49 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             ontap: () {
               if (_formKey.currentState!.validate()) {
                 if (!validateCommonFields()) return;
+
                 if (!validateYesFields()) return;
+                if (!validateYesImages()) return;
+                final imagePickerState = context.read<ImagePickerBloc>().state;
+
+                // Get all images from their respective states
+                final meterImages =
+                    (imagePickerState['Meter Image'] as ImagePickerSuccessState)
+                        .images;
+                final flowrangeImages = (imagePickerState['Flow Range Image']
+                        as ImagePickerSuccessState)
+                    .images;
+                final filterChemicalImages =
+                    (imagePickerState['Filter Chemical Image']
+                            as ImagePickerSuccessState)
+                        .images;
+                final coinreadingImages =
+                    (imagePickerState['Coin Reading Image']
+                            as ImagePickerSuccessState)
+                        .images;
+                final plantFrontImages = (imagePickerState['Plant Front Image']
+                        as ImagePickerSuccessState)
+                    .images;
+                final plantBackImages = (imagePickerState['Plant Back Image']
+                        as ImagePickerSuccessState)
+                    .images;
+                final plantInsideImages =
+                    (imagePickerState['Plant Inside Image']
+                            as ImagePickerSuccessState)
+                        .images;
+                            final additionalImages =
+                    (imagePickerState['Additional Images']
+                            as ImagePickerSuccessState)
+                        .images;
+
+                // Since these are single-image containers, we take the first image
+                final meterImage = meterImages.first;
+                final filterchemicalImage = filterChemicalImages.first;
+                final coinreadingImage = coinreadingImages.first;
+                final flowrangeImage = flowrangeImages.first;
+                final plantFrontImage = plantFrontImages.first;
+                final plantBackImage = plantBackImages.first;
+                final plantInsideImage = plantInsideImages.first;
                 debugPrint('Submitting Yes case with:');
                 debugPrint('Route: $selectedRoute');
                 debugPrint('Area: $selectedArea');
@@ -525,38 +569,46 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
         //   text: 'Submit',
         // )
         SubmitButton(
-  ontap: () {
-    if (_formKey.currentState!.validate()) {
-      if (!validateCommonFields()) return;
-      if (!validateNOImages()) return;
+          ontap: () {
+            if (_formKey.currentState!.validate()) {
+              if (!validateCommonFields()) return;
+              if (!validateNOImages()) return;
 
-      final imagePickerState = context.read<ImagePickerBloc>().state;
-      
-      // Get all images from their respective states
-      final meterImages = (imagePickerState['Meter Image'] as ImagePickerSuccessState).images;
-      final plantFrontImages = (imagePickerState['Plant Front Image'] as ImagePickerSuccessState).images;
-      final plantBackImages = (imagePickerState['Plant Back Image'] as ImagePickerSuccessState).images;
-      final plantInsideImages = (imagePickerState['Plant Inside Image'] as ImagePickerSuccessState).images;
+              final imagePickerState = context.read<ImagePickerBloc>().state;
 
-      // Since these are single-image containers, we take the first image
-      final meterImage = meterImages.first;
-      final plantFrontImage = plantFrontImages.first;
-      final plantBackImage = plantBackImages.first;
-      final plantInsideImage = plantInsideImages.first;
+              // Get all images from their respective states
+              final meterImages =
+                  (imagePickerState['Meter Image'] as ImagePickerSuccessState)
+                      .images;
+              final plantFrontImages = (imagePickerState['Plant Front Image']
+                      as ImagePickerSuccessState)
+                  .images;
+              final plantBackImages = (imagePickerState['Plant Back Image']
+                      as ImagePickerSuccessState)
+                  .images;
+              final plantInsideImages = (imagePickerState['Plant Inside Image']
+                      as ImagePickerSuccessState)
+                  .images;
 
-      debugPrint('Submitting No case with:');
-      debugPrint('Route: $selectedRoute');
-      debugPrint('Area: $selectedArea');
-      debugPrint('Meter Image: ${meterImage.path}');
-      debugPrint('Plant Front Image: ${plantFrontImage.path}');
-      debugPrint('Plant Back Image: ${plantBackImage.path}');
-      debugPrint('Plant Inside Image: ${plantInsideImage.path}');
-      
-      // Add your submission logic here
-    }
-  },
-  text: 'Submit',
-)
+              // Since these are single-image containers, we take the first image
+              final meterImage = meterImages.first;
+              final plantFrontImage = plantFrontImages.first;
+              final plantBackImage = plantBackImages.first;
+              final plantInsideImage = plantInsideImages.first;
+
+              debugPrint('Submitting No case with:');
+              debugPrint('Route: $selectedRoute');
+              debugPrint('Area: $selectedArea');
+              debugPrint('Meter Image: ${meterImage.path}');
+              debugPrint('Plant Front Image: ${plantFrontImage.path}');
+              debugPrint('Plant Back Image: ${plantBackImage.path}');
+              debugPrint('Plant Inside Image: ${plantInsideImage.path}');
+
+              // Add your submission logic here
+            }
+          },
+          text: 'Submit',
+        )
       ],
     );
   }
@@ -623,35 +675,88 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   //   }
   //   return true;
   // }
-bool validateNOImages() {
-  final imagePickerState = context.read<ImagePickerBloc>().state;
-  final meterImageState = imagePickerState['Meter Image'];
-  final plantFrontImageState = imagePickerState['Plant Front Image'];
-  final plantBackImageState = imagePickerState['Plant Back Image'];
-  final plantInsideImageState = imagePickerState['Plant Inside Image'];
+  bool validateNOImages() {
+    final imagePickerState = context.read<ImagePickerBloc>().state;
+    final meterImageState = imagePickerState['Meter Image'];
+    final plantFrontImageState = imagePickerState['Plant Front Image'];
+    final plantBackImageState = imagePickerState['Plant Back Image'];
+    final plantInsideImageState = imagePickerState['Plant Inside Image'];
 
-  // Check if states exist and have images
-  final hasMeterImage = meterImageState is ImagePickerSuccessState && 
-                       (meterImageState as ImagePickerSuccessState).images.isNotEmpty;
-  final hasPlantFrontImage = plantFrontImageState is ImagePickerSuccessState && 
-                            (plantFrontImageState as ImagePickerSuccessState).images.isNotEmpty;
-  final hasPlantBackImage = plantBackImageState is ImagePickerSuccessState && 
-                           (plantBackImageState as ImagePickerSuccessState).images.isNotEmpty;
-  final hasPlantInsideImage = plantInsideImageState is ImagePickerSuccessState && 
-                             (plantInsideImageState as ImagePickerSuccessState).images.isNotEmpty;
+    // Check if states exist and have images
+    final hasMeterImage = meterImageState is ImagePickerSuccessState &&
+        (meterImageState).images.isNotEmpty;
+    final hasPlantFrontImage =
+        plantFrontImageState is ImagePickerSuccessState &&
+            (plantFrontImageState).images.isNotEmpty;
+    final hasPlantBackImage = plantBackImageState is ImagePickerSuccessState &&
+        (plantBackImageState).images.isNotEmpty;
+    final hasPlantInsideImage =
+        plantInsideImageState is ImagePickerSuccessState &&
+            (plantInsideImageState).images.isNotEmpty;
 
-  if (!hasMeterImage || !hasPlantFrontImage || 
-      !hasPlantBackImage || !hasPlantInsideImage) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Please capture both Meter and Plant images'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    return false;
+    if (!hasMeterImage ||
+        !hasPlantFrontImage ||
+        !hasPlantBackImage ||
+        !hasPlantInsideImage) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please capture both Meter and Plant images'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+    return true;
   }
-  return true;
-}
+
+  bool validateYesImages() {
+    final imagePickerState = context.read<ImagePickerBloc>().state;
+    final meterImageState = imagePickerState['Meter Image'];
+    final flowrangeImageState = imagePickerState['Flow Range Image'];
+    final filterChemicalImageState = imagePickerState['Filter Chemical Image'];
+    final coinReadingImageState = imagePickerState['Coin Reading Image'];
+    final plantFrontImageState = imagePickerState['Plant Front Image'];
+    final plantBackImageState = imagePickerState['Plant Back Image'];
+    final plantInsideImageState = imagePickerState['Plant Inside Image'];
+
+    // Check if states exist and have images
+    final hasMeterImage = meterImageState is ImagePickerSuccessState &&
+        (meterImageState).images.isNotEmpty;
+    final hasflowrangeImage = flowrangeImageState is ImagePickerSuccessState &&
+        (flowrangeImageState).images.isNotEmpty;
+    final hasfilterChemicalImage =
+        filterChemicalImageState is ImagePickerSuccessState &&
+            (filterChemicalImageState).images.isNotEmpty;
+    final hascoinReadingImage =
+        coinReadingImageState is ImagePickerSuccessState &&
+            (coinReadingImageState).images.isNotEmpty;
+    final hasPlantFrontImage =
+        plantFrontImageState is ImagePickerSuccessState &&
+            (plantFrontImageState).images.isNotEmpty;
+    final hasPlantBackImage = plantBackImageState is ImagePickerSuccessState &&
+        (plantBackImageState).images.isNotEmpty;
+    final hasPlantInsideImage =
+        plantInsideImageState is ImagePickerSuccessState &&
+            (plantInsideImageState).images.isNotEmpty;
+
+    if (!hasMeterImage ||
+        !hasPlantFrontImage ||
+        !hasPlantBackImage ||
+        !hasPlantInsideImage ||
+        !hasflowrangeImage ||
+        !hasfilterChemicalImage ||
+        !hascoinReadingImage) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please capture both Meter and Plant images'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
