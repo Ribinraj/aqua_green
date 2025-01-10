@@ -1,15 +1,28 @@
 import 'dart:async';
+
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
-import 'package:aqua_green/presentation/screens/screen_reset_password/screen_reset_passwordpage.dart';
+import 'package:aqua_green/presentation/blocs/otp_bloc/otp_bloc_bloc.dart';
+import 'package:aqua_green/presentation/blocs/verify_otpbloc/verify_otp_bloc.dart';
+
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+
+import 'package:aqua_green/presentation/screens/signin_page/screen_signinpage.dart';
 import 'package:aqua_green/presentation/widgets/custom_navigator.dart';
+import 'package:aqua_green/presentation/widgets/custom_snackbar.dart';
+import 'package:aqua_green/presentation/widgets/custom_submitbutton.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ScreenOtppage extends StatefulWidget {
-  const ScreenOtppage({super.key});
+  final String customerid;
+  final String mobilenumber;
+  const ScreenOtppage(
+      {super.key, required this.customerid, required this.mobilenumber});
 
   @override
   State<ScreenOtppage> createState() => _ScreenOtppageState();
@@ -101,6 +114,8 @@ class _ScreenOtppageState extends State<ScreenOtppage> {
 
   @override
   Widget build(BuildContext context) {
+    final verifyotp = context.read<VerifyOtpBloc>();
+    final otpbloc = context.read<OtpBlocBloc>();
     return Scaffold(
       body: ListView(
         padding: EdgeInsets.all(ResponsiveUtils.wp(6)),
@@ -111,7 +126,7 @@ class _ScreenOtppageState extends State<ScreenOtppage> {
           Container(
             height: ResponsiveUtils.hp(32),
             //width: ResponsiveUtils.hp(20),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
                 color: Appcolors.kwhiteColor, shape: BoxShape.circle
                 // borderRadius: BorderRadius.only(
                 //     bottomLeft: Radius.circular(30),
@@ -217,22 +232,82 @@ class _ScreenOtppageState extends State<ScreenOtppage> {
                   ],
                 )
               else
-                GestureDetector(
-                  onTap: _resendOtp,
-                  child: TextStyles.caption(
-                    text: 'Resend OTP',
-                    color: Appcolors.kredColor,
-                    weight: FontWeight.w600,
-                  ),
+                BlocConsumer<OtpBlocBloc, OtpBlocState>(
+                  listener: (context, state) {
+                    if (state is OtpSuccessState) {
+                      CustomSnackBar.show(
+                          context: context,
+                          title: 'Success',
+                          message: 'Otp send successfully',
+                          contentType: ContentType.success);
+                    } else if (state is OtpErrorState) {
+                      CustomSnackBar.show(
+                          context: context,
+                          title: 'Error!',
+                          message: state.message,
+                          contentType: ContentType.failure);
+                    }
+                  },
+                  builder: (context, state) {
+                    return GestureDetector(
+                      onTap: () {
+                        _resendOtp();
+                        otpbloc.add(SendOtpClickEvent(
+                            mobilenumber: widget.mobilenumber));
+                      },
+                      child: TextStyles.caption(
+                        text: 'Resend OTP',
+                        color: Appcolors.kredColor,
+                        weight: FontWeight.w600,
+                      ),
+                    );
+                  },
                 ),
             ],
           ),
           ResponsiveSizedBox.height20,
-          SubmitButton(
-            ontap: () {
-              CustomNavigation.replace(context, ScreenResetPasswordpage());
+          BlocConsumer<VerifyOtpBloc, VerifyOtpState>(
+            listener: (context, state) {
+              if (state is VerifyOtpSuccessState) {
+                CustomNavigation.replace(context, ScreenSigninPage());
+              } else if (state is VerifyOtpErrorState) {
+                CustomSnackBar.show(
+                    context: context,
+                    title: 'Error!',
+                    message: state.message,
+                    contentType: ContentType.failure);
+              }
             },
-            text: 'Verify OTP',
+            builder: (context, state) {
+              if (state is VerifyOtpLoadingState) {
+                return Container(
+                  height: ResponsiveUtils.hp(6),
+                  width: ResponsiveUtils.screenWidth,
+                  color: Appcolors.kprimarycolor,
+                  child: const Center(
+                      child: SpinKitWave(
+                    color: Appcolors.kwhiteColor,
+                  )),
+                );
+              }
+              return SubmitButton(
+                ontap: () {
+                  String otp =
+                      _controllers.map((controller) => controller.text).join();
+                  if (otp.length == 6) {
+                    verifyotp.add(VerifyOtpclickEvent(
+                        otp: otp, customerid: widget.customerid));
+                  } else {
+                    CustomSnackBar.show(
+                        context: context,
+                        title: 'Error!',
+                        message: 'Please Enter valid otp',
+                        contentType: ContentType.failure);
+                  }
+                },
+                text: 'Verify OTP',
+              );
+            },
           ),
         ],
       ),

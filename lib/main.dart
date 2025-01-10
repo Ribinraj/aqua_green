@@ -1,8 +1,13 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
+import 'package:aqua_green/domain/repositories/login_repo.dart';
 import 'package:aqua_green/presentation/blocs/bottom_navigation_bloc/bottom_navigation_bloc.dart';
+import 'package:aqua_green/presentation/blocs/connectivity_bloc/connectivity_bloc.dart';
 import 'package:aqua_green/presentation/blocs/cubit/toggle_password_cubit.dart';
 import 'package:aqua_green/presentation/blocs/image_picker/image_picker_bloc.dart';
+import 'package:aqua_green/presentation/blocs/login_bloc/login_bloc.dart';
+import 'package:aqua_green/presentation/blocs/otp_bloc/otp_bloc_bloc.dart';
+import 'package:aqua_green/presentation/blocs/verify_otpbloc/verify_otp_bloc.dart';
 import 'package:aqua_green/presentation/screens/splash_page/screen_splashpage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ResponsiveUtils().init(context);
+    final loginrepo =Loginrepo();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -27,8 +33,23 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => BottomNavigationBloc(),
         ),
-           BlocProvider(
-          create: (context) =>ImagePickerBloc(),
+        BlocProvider(
+          create: (context) => ImagePickerBloc(),
+        ),
+        BlocProvider(
+          create: (context) => ConnectivityBloc(),
+        ),
+         BlocProvider(
+          create: (context) => LoginBloc(repository: loginrepo),
+
+        ),
+                BlocProvider(
+          create: (context) => OtpBlocBloc(repository: loginrepo),
+          
+        ),
+                 BlocProvider(
+          create: (context) => VerifyOtpBloc(repository: loginrepo),
+          
         ),
       ],
       child: MaterialApp(

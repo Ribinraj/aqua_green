@@ -1,4 +1,5 @@
 import 'package:aqua_green/presentation/blocs/bottom_navigation_bloc/bottom_navigation_bloc.dart';
+import 'package:aqua_green/presentation/screens/connectivity_page/connectivity_page.dart';
 import 'package:aqua_green/presentation/screens/mainpage/widgets/customnavbar.dart';
 import 'package:aqua_green/presentation/screens/screen_homepage/screen_homepage.dart';
 import 'package:aqua_green/presentation/screens/screen_measurepage/screen_measurepage.dart';
@@ -21,9 +22,11 @@ class ScreenMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
       builder: (context, state) {
-        return Scaffold(
-          body: _pages[state.currentPageIndex],
-          bottomNavigationBar: const BottomNavigationWidget(),
+        return ConnectivityAwareWidget(
+          child: Scaffold(
+            body: _pages[state.currentPageIndex],
+            bottomNavigationBar: const BottomNavigationWidget(),
+          ),
         );
       },
     );

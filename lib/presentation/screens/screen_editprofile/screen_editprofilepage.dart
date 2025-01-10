@@ -2,9 +2,10 @@ import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
 
-import 'package:aqua_green/presentation/screens/screen_reset_password/screen_reset_passwordpage.dart';
+
 import 'package:aqua_green/presentation/widgets/custom_logintextfield.dart';
 import 'package:aqua_green/presentation/widgets/custom_navigator.dart';
+import 'package:aqua_green/presentation/widgets/custom_submitbutton.dart';
 import 'package:flutter/material.dart';
 
 class ScreenEditProfilepage extends StatefulWidget {

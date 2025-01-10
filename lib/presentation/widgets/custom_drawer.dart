@@ -1,6 +1,7 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
+import 'package:aqua_green/presentation/widgets/customrout_mainpage.dart';
 
 import 'package:flutter/material.dart';
 
@@ -37,7 +38,9 @@ class CustomDrawer extends StatelessWidget {
             text: 'Home',
             weight: FontWeight.w600,
           ),
-          onTap: () {},
+          onTap: () {
+            navigateToMainPage(context, 0);
+          },
         ),
         ListTile(
           leading: const Icon(Icons.track_changes),
@@ -45,7 +48,9 @@ class CustomDrawer extends StatelessWidget {
             text: 'Measure',
             weight: FontWeight.w600,
           ),
-          onTap: () {},
+          onTap: () {
+            navigateToMainPage(context, 1);
+          },
         ),
         ListTile(
           leading: const Icon(Icons.bar_chart),
@@ -53,7 +58,9 @@ class CustomDrawer extends StatelessWidget {
             text: 'Report',
             weight: FontWeight.w600,
           ),
-          onTap: () {},
+          onTap: () {
+            navigateToMainPage(context, 2);
+          },
         ),
         ListTile(
           leading: const Icon(Icons.person),
@@ -61,7 +68,9 @@ class CustomDrawer extends StatelessWidget {
             text: 'Profile',
             weight: FontWeight.w600,
           ),
-          onTap: () {},
+          onTap: () {
+            navigateToMainPage(context, 3);
+          },
         ),
         const Divider(),
         Column(

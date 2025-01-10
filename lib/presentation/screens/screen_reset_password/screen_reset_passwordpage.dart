@@ -5,6 +5,7 @@ import 'package:aqua_green/presentation/screens/signin_page/screen_signinpage.da
 
 import 'package:aqua_green/presentation/widgets/custom_logintextfield.dart';
 import 'package:aqua_green/presentation/widgets/custom_navigator.dart';
+import 'package:aqua_green/presentation/widgets/custom_submitbutton.dart';
 
 import 'package:flutter/material.dart';
 
@@ -94,30 +95,30 @@ class _ScreenSigninPageState extends State<ScreenResetPasswordpage> {
   }
 }
 
-class SubmitButton extends StatelessWidget {
-  const SubmitButton({
-    super.key,
-    required this.ontap,
-    required this.text,
-  });
-  final void Function() ontap;
-  final String text;
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: ontap,
-      child: Container(
-        height: ResponsiveUtils.hp(6),
-        width: ResponsiveUtils.screenWidth,
-        color: Appcolors.kprimarycolor,
-        child: Center(
-          child: TextStyles.body(
-            text: text,
-            weight: FontWeight.bold,
-            color: Appcolors.kwhiteColor,
-          ),
-        ),
-      ),
-    );
-  }
-}
+// class SubmitButton extends StatelessWidget {
+//   const SubmitButton({
+//     super.key,
+//     required this.ontap,
+//     required this.text,
+//   });
+//   final void Function() ontap;
+//   final String text;
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: ontap,
+//       child: Container(
+//         height: ResponsiveUtils.hp(6),
+//         width: ResponsiveUtils.screenWidth,
+//         color: Appcolors.kprimarycolor,
+//         child: Center(
+//           child: TextStyles.body(
+//             text: text,
+//             weight: FontWeight.bold,
+//             color: Appcolors.kwhiteColor,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

@@ -2,14 +2,16 @@ import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
 import 'package:aqua_green/presentation/blocs/image_picker/image_picker_bloc.dart';
-import 'package:aqua_green/presentation/screens/screen_reset_password/screen_reset_passwordpage.dart';
+
 import 'package:aqua_green/presentation/widgets/custom_drawer.dart';
 import 'package:aqua_green/presentation/widgets/custom_imagecontainer.dart';
 import 'package:aqua_green/presentation/widgets/custom_multiimage_container.dart';
+import 'package:aqua_green/presentation/widgets/custom_submitbutton.dart';
 import 'package:aqua_green/presentation/widgets/custom_textfield_addmeasure.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ScreenMeasurepage extends StatefulWidget {
   const ScreenMeasurepage({super.key});
@@ -31,18 +33,36 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
     '9',
     '10',
   ];
-  final List<String> areas = [
-    'Area 1',
-    'Area 2',
-    'Area 3',
-    'Area 4',
-    'Area 5',
-    'Area 6',
-    'Area 7',
-    'Area 8',
-    'Area 9',
-    'Area 10',
-  ];
+  // final List<String> areas = [
+  //   'Area 1',
+  //   'Area 2',
+  //   'Area 3',
+  //   'Area 4',
+  //   'Area 5',
+  //   'Area 6',
+  //   'Area 7',
+  //   'Area 8',
+  //   'Area 9',
+  //   'Area 10',
+  // ];
+  ////////////////////
+  final LocationService _locationService = LocationService();
+  double? _distance;
+  final List<String> areas = sampleAreaCoordinates.keys.toList();
+  Future<void> _updateDistance(String selectedArea) async {
+    try {
+      double distance = await _locationService.calculateDistance(selectedArea);
+      setState(() {
+        _distance = distance;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+  }
+
+///////////////////////////
   final List<String> productflow =
       List.generate(20, (index) => ((index + 1) * 100).toString());
   final List<String> sandcarbonfilterPressure =
@@ -436,10 +456,9 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                     (imagePickerState['Plant Inside Image']
                             as ImagePickerSuccessState)
                         .images;
-                            final additionalImages =
-                    (imagePickerState['Additional Images']
-                            as ImagePickerSuccessState)
-                        .images;
+                final additionalImages = (imagePickerState['Additional Images']
+                        as ImagePickerSuccessState)
+                    .images;
 
                 // Since these are single-image containers, we take the first image
                 final meterImage = meterImages.first;
@@ -809,9 +828,19 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                     setState(() {
                       selectedArea = value;
                       areaController.text = value!;
+                      _updateDistance(value);
                     });
                   },
                   list: areas),
+              if (_distance != null)
+                Padding(
+                  padding: EdgeInsets.only(top: ResponsiveUtils.wp(4)),
+                  child: TextStyles.medium(
+                      text:
+                          'Distance from current location: ${_distance!.toStringAsFixed(2)} km',
+                      weight: FontWeight.bold,
+                      color: Appcolors.kgreenColor),
+                ),
               ResponsiveSizedBox.height20,
               TextStyles.medium(
                   text: 'Is there Power supply?',
@@ -896,3 +925,72 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
     );
   }
 }
+
+/////////////
+class LocationService {
+  Future<Position> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw 'Location services are disabled.';
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw 'Location permissions are denied';
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw 'Location permissions are permanently denied';
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<double> calculateDistance(String selectedArea) async {
+    try {
+      Position currentLocation = await getCurrentLocation();
+
+      // Get coordinates for selected area
+      final areaCoords = sampleAreaCoordinates[selectedArea];
+      if (areaCoords == null) {
+        throw 'Area coordinates not found';
+      }
+
+      double distanceInMeters = Geolocator.distanceBetween(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        areaCoords['latitude']!,
+        areaCoords['longitude']!,
+      );
+
+      return distanceInMeters / 1000; // Convert to kilometers
+    } catch (e) {
+      throw 'Error calculating distance: $e';
+    }
+  }
+}
+
+final Map<String, Map<String, double>> sampleAreaCoordinates = {
+  'Calicut': {
+    'latitude': 11.2588,
+    'longitude': 75.7804,
+  },
+  'Kochi': {
+    'latitude': 9.9312,
+    'longitude': 76.2673,
+  },
+  'Trivandrum': {
+    'latitude': 8.5241,
+    'longitude': 76.9366,
+  },
+  'Thrissur': {
+    'latitude': 10.5276,
+    'longitude': 76.2144,
+  },
+};
