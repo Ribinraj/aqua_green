@@ -12,6 +12,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ScreenMeasurepage extends StatefulWidget {
   const ScreenMeasurepage({super.key});
@@ -832,15 +833,39 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                     });
                   },
                   list: areas),
-              if (_distance != null)
-                Padding(
-                  padding: EdgeInsets.only(top: ResponsiveUtils.wp(4)),
-                  child: TextStyles.medium(
-                      text:
-                          'Distance from current location: ${_distance!.toStringAsFixed(2)} km',
-                      weight: FontWeight.bold,
-                      color: Appcolors.kgreenColor),
+              //   if (_distance != null)
+              Padding(
+                padding: EdgeInsets.only(top: ResponsiveUtils.wp(4)),
+                child: Row(
+                  children: [
+                    TextStyles.medium(
+                        text:
+                            'Distance from current location: ${_distance != null ? _distance!.toStringAsFixed(2) : 'Processing'} km',
+                        weight: FontWeight.bold,
+                        color: Appcolors.kgreenColor),
+                    Spacer(),
+                    if (_distance != null)
+                      GestureDetector(
+                        onTap: () {
+                           double latitude = 37.7749; 
+    double longitude = -122.4194; 
+
+    openGoogleMaps(latitude, longitude);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(ResponsiveUtils.wp(1.5)),
+                          decoration: BoxDecoration(
+                              color: Appcolors.kprimarycolor.withOpacity(.7),
+                              borderRadius: BorderRadius.circular(3)),
+                          child: TextStyles.caption(
+                              text: 'Locate',
+                              color: Appcolors.kwhiteColor,
+                              weight: FontWeight.bold),
+                        ),
+                      )
+                  ],
                 ),
+              ),
               ResponsiveSizedBox.height20,
               TextStyles.medium(
                   text: 'Is there Power supply?',
@@ -923,6 +948,44 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
         height: ResponsiveUtils.hp(5.7),
       ),
     );
+  }
+
+  ///////////////
+  // Future<void> openGoogleMaps(double latitude, double longitude) async {
+  //   String googleMapsUrl =
+  //       "https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving";
+
+  //   if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+  //     await launchUrl(Uri.parse(googleMapsUrl));
+  //   } else {
+  //     throw "Could not open Google Maps.";
+  //   }
+  // }
+Future<void> openGoogleMaps(double latitude, double longitude) async {
+  String googleMapsUrl =
+      "https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving";
+
+  if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+    await launchUrl(Uri.parse(googleMapsUrl));
+  } else {
+    throw "Could not open Google Maps.";
+  }
+}
+////////////////
+  Future<void> locatePlace(String selectedArea) async {
+    try {
+      // Call calculateDistance to get coordinates
+      final areaCoords = sampleAreaCoordinates[selectedArea];
+      final latitude = areaCoords?['latitude'];
+      final longitude = areaCoords?['longitude'];
+
+      print('Coordinates: ($latitude, $longitude)');
+
+      // Open Google Maps
+      await openGoogleMaps(latitude!, longitude!);
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 }
 

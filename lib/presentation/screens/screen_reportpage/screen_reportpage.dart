@@ -1,6 +1,8 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
+import 'package:aqua_green/presentation/widgets/custom_dashdevider.dart';
+import 'package:aqua_green/presentation/widgets/custom_drawer.dart';
 import 'package:aqua_green/presentation/widgets/custom_largetextwidget.dart';
 
 import 'package:aqua_green/presentation/widgets/custom_textwidget.dart';
@@ -215,6 +217,7 @@ class _ScreenReportpageState extends State<ScreenReportpage> {
             text: 'View Report',
             color: Appcolors.kprimarycolor),
       ),
+      drawer: const CustomDrawer(),
       body: ListView.builder(
         itemCount: 10,
         itemBuilder: (context, index) {
@@ -232,9 +235,7 @@ class _ScreenReportpageState extends State<ScreenReportpage> {
                 });
               },
               child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                  ),
+                  color: Colors.white,
                   child: Column(
                     children: [
                       // Existing content
@@ -289,32 +290,27 @@ class _ScreenReportpageState extends State<ScreenReportpage> {
                                 ),
                               ],
                             ),
-                            ResponsiveSizedBox.height10,
-                            CustomTextWidget(
-                                context: context,
-                                heading: 'Date',
-                                details: '10/12/2024'),
+                            ResponsiveSizedBox.height20,
                             ResponsiveSizedBox.height5,
                             Row(
                               children: [
+                                TextStyles.caption(
+                                    text: 'Date  : 12/04/2024',
+                                    color: Appcolors.kblackColor,
+                                    weight: FontWeight.bold),
+                                const Spacer(),
                                 SizedBox(
                                     width: ResponsiveUtils.wp(22),
                                     child: TextStyles.caption(
-                                        text: 'Electricity',
+                                        text: 'Electricity  :',
                                         color: Appcolors.kblackColor,
                                         weight: FontWeight.bold)),
-                                const Text(
-                                  ':',
-                                  style: TextStyle(
-                                      color: Appcolors.kblackColor,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold),
-                                ),
+
                                 ResponsiveSizedBox.width10,
                                 Container(
                                   decoration: BoxDecoration(
                                       color: Appcolors.kgreenColor
-                                          .withOpacity(.8)),
+                                          .withOpacity(.6)),
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: ResponsiveUtils.wp(3),
@@ -348,80 +344,75 @@ class _ScreenReportpageState extends State<ScreenReportpage> {
                               ],
                             ),
                             ResponsiveSizedBox.height10,
-                            Row(
-                              children: [
-                                TextStyles.caption(
-                                    text: 'Product Flow : 400',
-                                    color: Appcolors.kblackColor,
-                                    weight: FontWeight.bold),
-                                Spacer(),
-                                TextStyles.caption(
-                                    text: 'Coin Reading : 400',
-                                    color: Appcolors.kblackColor,
-                                    weight: FontWeight.bold),
-                              ],
-                            ),
-                            ResponsiveSizedBox.height10,
                             AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
-                              height: isExpanded
-                                  ? 200
-                                  : 0, // Adjust height as needed
+                              height: isExpanded ? ResponsiveUtils.hp(38) : 0,
                               curve: Curves.easeInOut,
                               child: SingleChildScrollView(
+                                padding:
+                                    EdgeInsets.only(top: ResponsiveUtils.wp(2)),
                                 physics: const NeverScrollableScrollPhysics(),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        TextStyles.medium(
-                                          text: 'Pressure Details',
-                                          color: Appcolors.kprimarycolor,
-                                          weight: FontWeight.bold,
-                                        ),
-                                      ],
-                                    ),
-                                    const Divider(
-                                      thickness: .5,
-                                      color: Appcolors.kprimarycolor,
-                                    ),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'Sand filter pressure',
-                                        details: '500'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'Carbon filter pressure',
-                                        details: '500'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'System pressure',
-                                        details: '500'),
-                                    ResponsiveSizedBox.height5,
-                                    const Divider(
-                                      thickness: .5,
-                                      color: Appcolors.kprimarycolor,
-                                    ),
-                                    CustomTextWidget(
-                                        context: context,
-                                        heading: 'Reject Flow',
-                                        details: '150'),
-                                    CustomTextWidget(
-                                        context: context,
-                                        heading: 'TDS',
-                                        details: '100'),
-                                    CustomTextWidget(
-                                        context: context,
-                                        heading: 'Water Ltrs',
-                                        details: '350'),
-                                    CustomTextWidget(
-                                        context: context,
-                                        heading: 'KEB meter',
-                                        details: '34.56'),
-                                  ],
+                                child: Container(
+                                  color: Appcolors.kgreenColor.withOpacity(.15),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ResponsiveSizedBox.height10,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          TextStyles.medium(
+                                            text: 'More Details',
+                                            color: Appcolors.kprimarycolor,
+                                            weight: FontWeight.bold,
+                                          ),
+                                        ],
+                                      ),
+                                      const Divider(
+                                        thickness: .5,
+                                        color: Appcolors.kprimarycolor,
+                                      ),
+                                      CustomLargeTextWidget(
+                                          context: context,
+                                          heading: 'Product Flow',
+                                          details: '500'),
+                                      CustomLargeTextWidget(
+                                          context: context,
+                                          heading: 'Coin Reading',
+                                          details: '500'),
+                                      CustomLargeTextWidget(
+                                          context: context,
+                                          heading: 'Sand filter pressure',
+                                          details: '500'),
+                                      CustomLargeTextWidget(
+                                          context: context,
+                                          heading: 'Carbon filter pressure',
+                                          details: '500'),
+                                      CustomLargeTextWidget(
+                                          context: context,
+                                          heading: 'System pressure',
+                                          details: '500'),
+                                      CustomLargeTextWidget(
+                                          context: context,
+                                          heading: 'Reject Flow',
+                                          details: '150'),
+                                      CustomLargeTextWidget(
+                                          context: context,
+                                          heading: 'TDS',
+                                          details: '100'),
+                                      CustomLargeTextWidget(
+                                          context: context,
+                                          heading: 'Water Ltrs',
+                                          details: '350'),
+                                      CustomLargeTextWidget(
+                                          context: context,
+                                          heading: 'KEB meter',
+                                          details: '34.56'),
+                                      ResponsiveSizedBox.height10
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

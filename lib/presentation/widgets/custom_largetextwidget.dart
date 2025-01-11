@@ -19,12 +19,12 @@ class CustomLargeTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
+      padding: const EdgeInsets.only(bottom: 5, top: 5, left: 15),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-              width: ResponsiveUtils.wp(40),
+              width: ResponsiveUtils.wp(45),
               child: TextStyles.caption(
                   text: heading,
                   color: Appcolors.kblackColor,
@@ -36,7 +36,7 @@ class CustomLargeTextWidget extends StatelessWidget {
                 fontSize: 10,
                 fontWeight: FontWeight.bold),
           ),
-          ResponsiveSizedBox.width10,
+          ResponsiveSizedBox.width20,
           Expanded(
             child: TextStyles.caption(
                 text: details,

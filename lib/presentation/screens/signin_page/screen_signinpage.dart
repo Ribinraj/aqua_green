@@ -35,6 +35,7 @@ class _ScreenSigninPageState extends State<ScreenSigninPage> {
     return Scaffold(
       //backgroundColor: const Color.fromARGB(255, 234, 244, 249),
       body: Form(
+        key: formKey,
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(ResponsiveUtils.wp(6)),
@@ -180,26 +181,27 @@ class _ScreenSigninPageState extends State<ScreenSigninPage> {
                         height: ResponsiveUtils.hp(6),
                         width: ResponsiveUtils.screenWidth,
                         color: Appcolors.kprimarycolor,
-                        child: const Center(
+                        child:  Center(
                             child: SpinKitWave(
                           color: Appcolors.kwhiteColor,
+                          size: ResponsiveUtils.wp(6),
                         )),
                       );
                     }
                     return SubmitButton(
                         ontap: () {
-                          // if (formKey.currentState!.validate()) {
-                          //   loginbloc.add(LoginButtonClickingEvent(
-                          //       mobielnumber: mobilenumberController.text,
-                          //       password: passwordController.text));
-                          // } else {
-                          //   CustomSnackBar.show(
-                          //       context: context,
-                          //       title: 'Error!!',
-                          //       message: 'Fill all fields',
-                          //       contentType: ContentType.failure);
-                          // }
-                          CustomNavigation.replace(context, ScreenMainPage());
+                          if (formKey.currentState!.validate()) {
+                            loginbloc.add(LoginButtonClickingEvent(
+                                mobielnumber: mobilenumberController.text,
+                                password: passwordController.text));
+                          } else {
+                            CustomSnackBar.show(
+                                context: context,
+                                title: 'Error!!',
+                                message: 'Fill all fields',
+                                contentType: ContentType.failure);
+                          }
+                          //CustomNavigation.replace(context, ScreenMainPage());
                         },
                         text: 'Login');
                   },
