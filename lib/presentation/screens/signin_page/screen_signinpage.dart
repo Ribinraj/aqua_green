@@ -134,8 +134,9 @@ class _ScreenSigninPageState extends State<ScreenSigninPage> {
                           CustomNavigation.pop(context);
                           if (state is OtpSuccessState) {
                             CustomNavigation.replace(
-                                context,  ScreenOtppage(
-                                  customerid: state.customerid,
+                                context,
+                                ScreenOtppage(
+                                  userid: state.userId,
                                   mobilenumber: mobilenumberController.text,
                                 ));
                           } else if (state is OtpErrorState) {
@@ -150,8 +151,19 @@ class _ScreenSigninPageState extends State<ScreenSigninPage> {
                       builder: (context, state) {
                         return GestureDetector(
                           onTap: () {
-                            context.read<OtpBlocBloc>().add(SendOtpClickEvent(
+                            if (mobilenumberController.text.length == 10 &&
+                                mobilenumberController.text.isNotEmpty) {
+                                   context.read<OtpBlocBloc>().add(SendOtpClickEvent(
                                 mobilenumber: mobilenumberController.text));
+                         
+                            }else{
+                                   CustomSnackBar.show(
+                                  context: context,
+                                  title: 'Error!',
+                                  message: 'Enter validmobile number',
+                                  contentType: ContentType.failure);
+                            }
+                           
                           },
                           child: TextStyles.medium(
                               text: 'Forgot Password?',
@@ -181,7 +193,7 @@ class _ScreenSigninPageState extends State<ScreenSigninPage> {
                         height: ResponsiveUtils.hp(6),
                         width: ResponsiveUtils.screenWidth,
                         color: Appcolors.kprimarycolor,
-                        child:  Center(
+                        child: Center(
                             child: SpinKitWave(
                           color: Appcolors.kwhiteColor,
                           size: ResponsiveUtils.wp(6),

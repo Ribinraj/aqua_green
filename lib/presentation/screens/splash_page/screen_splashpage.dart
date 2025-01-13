@@ -1,8 +1,10 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
+import 'package:aqua_green/presentation/screens/mainpage/screen_mainpage.dart';
 import 'package:aqua_green/presentation/screens/signin_page/screen_signinpage.dart';
 import 'package:aqua_green/presentation/widgets/custom_navigator.dart';
+import 'package:aqua_green/presentation/widgets/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -19,7 +21,7 @@ class _ScreenSplashPageState extends State<ScreenSplashPage> {
     // TODO: implement initState
     super.initState();
     Future.delayed(const Duration(seconds: 1), () {
-      navigate(context);
+      checkUserlogin(context);
     });
   }
 
@@ -52,10 +54,13 @@ class _ScreenSplashPageState extends State<ScreenSplashPage> {
     );
   }
 
-  Future<void> navigate(BuildContext context) async {
-    CustomNavigation.replace(
-      context,
-      const ScreenSigninPage(),
-    );
+  Future<void> checkUserlogin(context) async {
+    final String usertoken = await getUserToken();
+    if (usertoken.isEmpty) {
+      await Future.delayed(const Duration(seconds: 3));
+      CustomNavigation.replace(context, ScreenSigninPage());
+    } else {
+      CustomNavigation.replace(context, ScreenMainPage());
+    }
   }
 }

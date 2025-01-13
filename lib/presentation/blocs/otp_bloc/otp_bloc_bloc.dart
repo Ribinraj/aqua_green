@@ -18,5 +18,10 @@ class OtpBlocBloc extends Bloc<OtpBlocEvent, OtpBlocState> {
       SendOtpClickEvent event, Emitter<OtpBlocState> emit) async {
     emit(OtpLoadingState());
     final response = await repository.sendotp(mobilenumber: event.mobilenumber);
+    if (!response.error && response.status == 200) {
+      emit(OtpSuccessState(userId: response.data!));
+    } else {
+      emit(OtpErrorState(message: response.message));
+    }
   }
 }

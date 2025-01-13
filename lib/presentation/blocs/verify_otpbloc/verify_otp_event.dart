@@ -5,7 +5,7 @@ sealed class VerifyOtpEvent {}
 
 final class VerifyOtpclickEvent extends VerifyOtpEvent {
   final String otp;
-  final String customerid;
+  final String userId;
 
-  VerifyOtpclickEvent({required this.otp, required this.customerid});
+  VerifyOtpclickEvent({required this.otp, required this.userId});
 }

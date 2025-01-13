@@ -2,10 +2,13 @@ import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
 import 'package:aqua_green/presentation/screens/screen_editprofile/screen_editprofilepage.dart';
+import 'package:aqua_green/presentation/screens/signin_page/screen_signinpage.dart';
 
 import 'package:aqua_green/presentation/widgets/custom_navigator.dart';
 import 'package:aqua_green/presentation/widgets/custom_submitbutton.dart';
+import 'package:aqua_green/presentation/widgets/customrout_mainpage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenProfilepage extends StatefulWidget {
   const ScreenProfilepage({super.key});
@@ -74,10 +77,77 @@ class _ScreenProfilepageState extends State<ScreenProfilepage> {
               Row(
                 children: [
                   const Spacer(),
-                  TextStyles.medium(
-                      text: 'Logout',
-                      weight: FontWeight.bold,
-                      color: Appcolors.kredColor),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            shape: BeveledRectangleBorder(),
+                            title: TextStyles.subheadline(
+                                text: 'Logout', color: Appcolors.kprimarycolor),
+                            content: TextStyles.medium(
+                                text: "Are you sure you want to sign out?",
+                                weight: FontWeight.bold,
+                                color: Appcolors.kblackColor),
+                            actions: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Container(
+                                  width: ResponsiveUtils.wp(12),
+                                  height: ResponsiveUtils.hp(3),
+                                  color: Appcolors.kgreenColor,
+                                  child: Center(
+                                      child: TextStyles.medium(
+                                          text: 'No',
+                                          color: Appcolors.kwhiteColor,
+                                          weight: FontWeight.bold)),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  SharedPreferences preferences =
+                                      await SharedPreferences.getInstance();
+                                  await preferences.clear();
+                                  Navigator.of(context).pop();
+                                   navigateToMainPage(context, 0);
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ScreenSigninPage()),
+                                    (Route<dynamic> route) =>
+                                        false, // Remove all previous routes
+                                  );
+                                 
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("You have signed out!")),
+                                  );
+                                },
+                                child: Container(
+                                  width: ResponsiveUtils.wp(12),
+                                  height: ResponsiveUtils.hp(3),
+                                  color: Appcolors.kredColor,
+                                  child: Center(
+                                      child: TextStyles.medium(
+                                          text: 'Yes',
+                                          color: Appcolors.kwhiteColor,
+                                          weight: FontWeight.bold)),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: TextStyles.medium(
+                        text: 'Logout',
+                        weight: FontWeight.bold,
+                        color: Appcolors.kredColor),
+                  ),
                   ResponsiveSizedBox.width10,
                 ],
               )
@@ -87,7 +157,7 @@ class _ScreenProfilepageState extends State<ScreenProfilepage> {
         ResponsiveSizedBox.height30,
         SubmitButton(
             ontap: () {
-              CustomNavigation.push(context,const ScreenEditProfilepage());
+              CustomNavigation.push(context, const ScreenEditProfilepage());
             },
             text: 'Edit')
       ],
@@ -106,7 +176,7 @@ class _ScreenProfilepageState extends State<ScreenProfilepage> {
       ),
       child: Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 11,
         ),
         overflow: TextOverflow.ellipsis,

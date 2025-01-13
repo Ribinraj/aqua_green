@@ -19,7 +19,7 @@ class VerifyOtpBloc extends Bloc<VerifyOtpEvent, VerifyOtpState> {
       VerifyOtpclickEvent event, Emitter<VerifyOtpState> emit) async {
     emit(VerifyOtpLoadingState());
     final response = await repository.verifyotp(
-        customerid: event.customerid, otp: event.otp);
+        userId:  event.userId, otp: event.otp);
     if (!response.error && response.status == 200) {
       emit(VerifyOtpSuccessState());
     } else {

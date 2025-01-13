@@ -5,6 +5,7 @@ import 'package:aqua_green/presentation/screens/screen_homepage/screen_homepage.
 import 'package:aqua_green/presentation/screens/screen_measurepage/screen_measurepage.dart';
 import 'package:aqua_green/presentation/screens/screen_profilepage/screen_profilepage.dart';
 import 'package:aqua_green/presentation/screens/screen_reportpage/screen_reportpage.dart';
+import 'package:aqua_green/presentation/screens/screen_updateunits/update_units.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,6 +14,7 @@ class ScreenMainPage extends StatelessWidget {
 
   final List<Widget> _pages = [
     ScreenHomepage(),
+    ScreenUpdateUnits(),
     ScreenMeasurepage(),
     ScreenReportpage(),
     ScreenProfilepage()

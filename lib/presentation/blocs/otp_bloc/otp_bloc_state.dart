@@ -8,9 +8,9 @@ final class OtpBlocInitial extends OtpBlocState {}
 final class OtpLoadingState extends OtpBlocState {}
 
 final class OtpSuccessState extends OtpBlocState {
-  final String customerid;
+  final String userId;
 
-  OtpSuccessState({required this.customerid});
+  OtpSuccessState({required this.userId});
 }
 
 final class OtpErrorState extends OtpBlocState {

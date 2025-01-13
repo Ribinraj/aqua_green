@@ -1,7 +1,16 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
+import 'package:aqua_green/data/area_model.dart';
+import 'package:aqua_green/data/route_model.dart';
+import 'package:aqua_green/data/unit_model.dart';
+import 'package:aqua_green/presentation/blocs/fetch_area/fetch_area_bloc.dart';
+import 'package:aqua_green/presentation/blocs/fetch_route/fetch_route_bloc.dart';
+import 'package:aqua_green/presentation/blocs/fetch_unit/fetch_unit_bloc.dart';
 import 'package:aqua_green/presentation/blocs/image_picker/image_picker_bloc.dart';
+import 'package:aqua_green/presentation/screens/screen_measurepage/widgets/image_compressor.dart';
+import 'package:aqua_green/presentation/screens/screen_measurepage/widgets/location_class.dart';
+import 'package:aqua_green/presentation/screens/screen_updateunits/widgets/disabledropdownbutton.dart';
 
 import 'package:aqua_green/presentation/widgets/custom_drawer.dart';
 import 'package:aqua_green/presentation/widgets/custom_imagecontainer.dart';
@@ -11,7 +20,8 @@ import 'package:aqua_green/presentation/widgets/custom_textfield_addmeasure.dart
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 
 class ScreenMeasurepage extends StatefulWidget {
@@ -22,37 +32,16 @@ class ScreenMeasurepage extends StatefulWidget {
 }
 
 class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
-  final List<String> routes = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-  ];
-  // final List<String> areas = [
-  //   'Area 1',
-  //   'Area 2',
-  //   'Area 3',
-  //   'Area 4',
-  //   'Area 5',
-  //   'Area 6',
-  //   'Area 7',
-  //   'Area 8',
-  //   'Area 9',
-  //   'Area 10',
-  // ];
-  ////////////////////
   final LocationService _locationService = LocationService();
   double? _distance;
-  final List<String> areas = sampleAreaCoordinates.keys.toList();
-  Future<void> _updateDistance(String selectedArea) async {
+
+  Future<void> _updateDistance(
+      double targetLatitude, double targetLongitude) async {
     try {
-      double distance = await _locationService.calculateDistance(selectedArea);
+      double distance = await _locationService.calculateDistance(
+        targetLatitude,
+        targetLongitude,
+      );
       setState(() {
         _distance = distance;
       });
@@ -79,6 +68,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   ];
   final TextEditingController routeController = TextEditingController();
   final TextEditingController areaController = TextEditingController();
+  final TextEditingController unitController = TextEditingController();
   final TextEditingController yesNoController = TextEditingController();
   final TextEditingController productFlowController = TextEditingController();
   final TextEditingController rejectflowController = TextEditingController();
@@ -99,6 +89,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
 
   final _formKey = GlobalKey<FormState>();
   String? selectedRoute;
+  String? selectedUnit;
   String? selectedArea;
   String selectedYesNo = 'Yes';
   String? selectedProductFlow;
@@ -106,12 +97,18 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   String? selectedSandFilterPressure;
   String? selectedCarbonFilterPressure;
   String? selectedSystemPressure;
-
+  AreaModel? selectedAreaModel;
+  UnitModel? selectedUnitModel;
+  double? selectedLatitude;
+  double? selectedLongitude;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     yesNoController.text = selectedYesNo;
+    context.read<FetchRouteBloc>().add(FetchRouteInitialEvent());
+    context.read<FetchAreaBloc>().add(FetchAreaInitialEvent());
+    context.read<FetchUnitBloc>().add(FetchUnitInitialEvent());
   }
 
   Widget buildYesContent() {
@@ -424,7 +421,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
         ),
         ResponsiveSizedBox.height30,
         SubmitButton(
-            ontap: () {
+            ontap: () async {
               if (_formKey.currentState!.validate()) {
                 if (!validateCommonFields()) return;
 
@@ -462,13 +459,36 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                     .images;
 
                 // Since these are single-image containers, we take the first image
-                final meterImage = meterImages.first;
-                final filterchemicalImage = filterChemicalImages.first;
-                final coinreadingImage = coinreadingImages.first;
-                final flowrangeImage = flowrangeImages.first;
-                final plantFrontImage = plantFrontImages.first;
-                final plantBackImage = plantBackImages.first;
-                final plantInsideImage = plantInsideImages.first;
+                // final meterImage = meterImages.first;
+                // final filterchemicalImage = filterChemicalImages.first;
+                // final coinreadingImage = coinreadingImages.first;
+                // final flowrangeImage = flowrangeImages.first;
+                // final plantFrontImage = plantFrontImages.first;
+                // final plantBackImage = plantBackImages.first;
+                // final plantInsideImage = plantInsideImages.first;
+                // // Process individual images
+                final processedMeterImage =
+                    await ImageProcessor.processImage(meterImages.first);
+                final processedFilterChemicalImage =
+                    await ImageProcessor.processImage(
+                        filterChemicalImages.first);
+                final processedCoinReadingImage =
+                    await ImageProcessor.processImage(coinreadingImages.first);
+                final processedFlowRangeImage =
+                    await ImageProcessor.processImage(flowrangeImages.first);
+                final processedPlantFrontImage =
+                    await ImageProcessor.processImage(plantFrontImages.first);
+                final processedPlantBackImage =
+                    await ImageProcessor.processImage(plantBackImages.first);
+                final processedPlantInsideImage =
+                    await ImageProcessor.processImage(plantInsideImages.first);
+
+// Process additional images
+                final processedAdditionalImages =
+                    await ImageProcessor.processMultipleImages(
+                        additionalImages);
+
+// Now you can send these processed images to your API
                 debugPrint('Submitting Yes case with:');
                 debugPrint('Route: $selectedRoute');
                 debugPrint('Area: $selectedArea');
@@ -808,64 +828,354 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                   weight: FontWeight.bold,
                   color: Appcolors.kdarkbluecolor),
               ResponsiveSizedBox.height5,
-              dropdownTexfield(
-                  hintText: 'Select Route',
-                  onChanged: (value) {
-                    setState(() {
-                      selectedRoute = value;
-                      routeController.text = value!;
-                    });
-                  },
-                  list: routes),
+              BlocBuilder<FetchRouteBloc, FetchRouteState>(
+                builder: (context, state) {
+                  if (state is FetchRouteLoadingState) {
+                    return Container(
+                      height: ResponsiveUtils.hp(6),
+                      width: ResponsiveUtils.screenWidth,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: .5, color: Appcolors.kprimarycolor)),
+                      child: Center(
+                          child: SpinKitWave(
+                        color: Appcolors.kprimarycolor,
+                        size: ResponsiveUtils.wp(4),
+                      )),
+                    );
+                  } else if (state is FetchRouteSuccessState) {
+                    return DropdownButtonFormField2<RouteModel>(
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 5),
+                        filled: true,
+                        fillColor: Appcolors.kwhiteColor,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Appcolors.kprimarycolor, width: 0.5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Appcolors.kprimarycolor, width: 1.5),
+                        ),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Appcolors.kprimarycolor, width: 0.5),
+                        ),
+                      ),
+                      hint: TextStyles.caption(
+                          text: 'Select Route',
+                          color: Appcolors.kdarkbluecolor),
+                      items: state.routes
+                          .map((route) => DropdownMenuItem<RouteModel>(
+                                value: route,
+                                child: TextStyles.caption(
+                                    text: route.routeName,
+                                    color: Appcolors.kdarkbluecolor),
+                              ))
+                          .toList(),
+                      onChanged: (RouteModel? route) {
+                        setState(() {
+                          selectedRoute = route?.routeName;
+                          selectedArea = null;
+                          selectedAreaModel = null;
+                          areaController.clear();
+                          selectedUnit = null;
+                          selectedUnitModel = null;
+                          unitController.clear();
+                          if (route != null) {
+                            routeController.text = route.routeId;
+
+                            // Fetch areas for selected route
+                            context.read<FetchAreaBloc>().add(
+                                FetchAreaWithRouteId(routeId: route.routeId));
+                          }
+                        });
+                      },
+                      buttonStyleData: const ButtonStyleData(),
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: ResponsiveUtils.hp(50),
+                        decoration: BoxDecoration(
+                          color: Appcolors.kwhiteColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      menuItemStyleData: MenuItemStyleData(
+                        height: ResponsiveUtils.hp(5.7),
+                      ),
+                    );
+                  } else if (state is FetchRouteErrorState) {
+                    return Container(
+                      height: ResponsiveUtils.hp(6),
+                      width: ResponsiveUtils.screenWidth,
+                      decoration: BoxDecoration(
+                          color: Appcolors.kwhiteColor,
+                          border: Border.all(
+                              width: .5, color: Appcolors.kprimarycolor)),
+                      child: Center(
+                          child: TextStyles.caption(
+                              text: state.message, color: Appcolors.kredColor)),
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
+              ),
               ResponsiveSizedBox.height20,
               TextStyles.medium(
                   text: 'Area',
                   weight: FontWeight.bold,
                   color: Appcolors.kdarkbluecolor),
               ResponsiveSizedBox.height5,
-              dropdownTexfield(
-                  hintText: 'Select Select Area',
-                  onChanged: (value) {
-                    setState(() {
-                      selectedArea = value;
-                      areaController.text = value!;
-                      _updateDistance(value);
-                    });
-                  },
-                  list: areas),
-              //   if (_distance != null)
-              Padding(
-                padding: EdgeInsets.only(top: ResponsiveUtils.wp(4)),
-                child: Row(
-                  children: [
-                    TextStyles.medium(
-                        text:
-                            'Distance from current location: ${_distance != null ? _distance!.toStringAsFixed(2) : 'Processing'} km',
-                        weight: FontWeight.bold,
-                        color: Appcolors.kgreenColor),
-                    Spacer(),
-                    if (_distance != null)
-                      GestureDetector(
-                        onTap: () {
-                           double latitude = 37.7749; 
-    double longitude = -122.4194; 
-
-    openGoogleMaps(latitude, longitude);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(ResponsiveUtils.wp(1.5)),
-                          decoration: BoxDecoration(
-                              color: Appcolors.kprimarycolor.withOpacity(.7),
-                              borderRadius: BorderRadius.circular(3)),
-                          child: TextStyles.caption(
-                              text: 'Locate',
-                              color: Appcolors.kwhiteColor,
-                              weight: FontWeight.bold),
+              BlocBuilder<FetchAreaBloc, FetchAreaState>(
+                builder: (context, state) {
+                  if (selectedRoute == null) {
+                    return DisabledDropdown(hintText: 'Select route first');
+                  }
+                  if (state is FetchAreaLoadingState) {
+                    return Container(
+                      height: ResponsiveUtils.hp(6),
+                      width: ResponsiveUtils.screenWidth,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: .5, color: Appcolors.kprimarycolor)),
+                      child: Center(
+                          child: SpinKitWave(
+                        color: Appcolors.kprimarycolor,
+                        size: ResponsiveUtils.wp(6),
+                      )),
+                    );
+                  }
+                  if (state is FetchAreaWithRouteIdSuccessState) {
+                    if (state.areas.isEmpty) {
+                      return DisabledDropdown(hintText: 'No areas Available');
+                    }
+                    return DropdownButtonFormField2<AreaModel>(
+                      value: selectedAreaModel,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 5),
+                        filled: true,
+                        fillColor: Appcolors.kwhiteColor,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Appcolors.kprimarycolor, width: 0.5),
                         ),
-                      )
-                  ],
-                ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Appcolors.kprimarycolor, width: 1.5),
+                        ),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Appcolors.kprimarycolor, width: 0.5),
+                        ),
+                      ),
+                      hint: TextStyles.caption(
+                          text: 'Select Area', color: Appcolors.kdarkbluecolor),
+                      items: state.areas
+                          .map((area) => DropdownMenuItem<AreaModel>(
+                                value: area,
+                                child: TextStyles.caption(
+                                    text: area.areaName,
+                                    color: Appcolors.kdarkbluecolor),
+                              ))
+                          .toList(),
+                      onChanged: (AreaModel? area) {
+                        setState(() {
+                          selectedAreaModel = area;
+                          selectedArea = area?.areaName;
+                          selectedUnit = null;
+                          selectedUnitModel = null;
+                          unitController.clear();
+                          if (area != null) {
+                            areaController.text = area.areaId;
+                            context.read<FetchUnitBloc>().add(
+                                FetchUnitWithRouteIdandAreaId(
+                                    routeId: area.routeId,
+                                    areaId: area.areaId));
+                          } else {
+                            areaController.clear();
+                          }
+                        });
+                      },
+                      buttonStyleData: const ButtonStyleData(),
+                      dropdownStyleData: DropdownStyleData(
+                        maxHeight: ResponsiveUtils.hp(50),
+                        decoration: BoxDecoration(
+                          color: Appcolors.kwhiteColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      menuItemStyleData: MenuItemStyleData(
+                        height: ResponsiveUtils.hp(5.7),
+                      ),
+                    );
+                  } else if (state is FetchAreaErrorState) {
+                    return Container(
+                      height: ResponsiveUtils.hp(6),
+                      width: ResponsiveUtils.screenWidth,
+                      decoration: BoxDecoration(
+                          color: Appcolors.kwhiteColor,
+                          border: Border.all(
+                              width: .5, color: Appcolors.kprimarycolor)),
+                      child: Center(
+                          child: TextStyles.caption(
+                              text: state.message, color: Appcolors.kredColor)),
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
               ),
+              ResponsiveSizedBox.height20,
+              TextStyles.medium(
+                  text: 'Unit',
+                  weight: FontWeight.bold,
+                  color: Appcolors.kdarkbluecolor),
+              ResponsiveSizedBox.height5,
+              BlocBuilder<FetchUnitBloc, FetchUnitState>(
+                builder: (context, state) {
+                  if (selectedRoute == null || selectedArea == null) {
+                    return DisabledDropdown(
+                        hintText: 'Select route and area first');
+                  }
+                  if (state is FetchUnitLoadingState) {
+                    return Container(
+                      height: ResponsiveUtils.hp(6),
+                      width: ResponsiveUtils.screenWidth,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: .5, color: Appcolors.kprimarycolor)),
+                      child: Center(
+                          child: SpinKitWave(
+                        color: Appcolors.kprimarycolor,
+                        size: ResponsiveUtils.wp(6),
+                      )),
+                    );
+                  }
+                  if (state is FetchUnitWithRouteIdandAreaIdSuccessState) {
+                    if (state.units.isEmpty) {
+                      return DisabledDropdown(hintText: 'No units Available');
+                    }
+                    return Column(
+                      children: [
+                        DropdownButtonFormField2<UnitModel>(
+                          value: selectedUnitModel,
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(vertical: 5),
+                            filled: true,
+                            fillColor: Appcolors.kwhiteColor,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Appcolors.kprimarycolor, width: 0.5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Appcolors.kprimarycolor, width: 1.5),
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Appcolors.kprimarycolor, width: 0.5),
+                            ),
+                          ),
+                          hint: TextStyles.caption(
+                              text: 'Select Unit',
+                              color: Appcolors.kdarkbluecolor),
+                          items: state.units
+                              .map((unit) => DropdownMenuItem<UnitModel>(
+                                    value: unit,
+                                    child: TextStyles.caption(
+                                        text: unit.unitName,
+                                        color: Appcolors.kdarkbluecolor),
+                                  ))
+                              .toList(),
+                          onChanged: (UnitModel? unit) {
+                            setState(() {
+                              selectedUnitModel = unit;
+                              selectedUnit = unit?.unitName;
+                              if (unit != null) {
+                                unitController.text = unit.unitId;
+                                selectedLatitude = unit.latitude;
+                                selectedLongitude = unit.longitude;
+                                _updateDistance(
+                                    unit.latitude!, unit.longitude!);
+                              } else {
+                                unitController.clear();
+                              }
+                            });
+                          },
+                          buttonStyleData: const ButtonStyleData(),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: ResponsiveUtils.hp(50),
+                            decoration: BoxDecoration(
+                              color: Appcolors.kwhiteColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          menuItemStyleData: MenuItemStyleData(
+                            height: ResponsiveUtils.hp(5.7),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: ResponsiveUtils.wp(4)),
+        child: Row(
+  children: [
+    if (selectedLatitude == null && selectedLongitude == null)
+      TextStyles.medium(
+        text: 'Update Unit first',
+        color: Appcolors.kredColor,
+      )
+    else
+      TextStyles.medium(
+        text:
+            'Distance from current location: ${_distance != null ? _distance!.toStringAsFixed(2) : 'Processing'} km',
+        weight: FontWeight.bold,
+        color: Appcolors.kgreenColor,
+      ),
+    Spacer(),
+    if (_distance != null)
+      GestureDetector(
+        onTap: () {
+          if (selectedLatitude != null && selectedLongitude != null) {
+            openGoogleMaps(selectedLatitude!, selectedLongitude!);
+          }
+        },
+        child: Container(
+          padding: EdgeInsets.all(ResponsiveUtils.wp(1.5)),
+          decoration: BoxDecoration(
+            color: Appcolors.kprimarycolor.withOpacity(.7),
+            borderRadius: BorderRadius.circular(3),
+          ),
+          child: TextStyles.caption(
+            text: 'Locate',
+            color: Appcolors.kwhiteColor,
+            weight: FontWeight.bold,
+          ),
+        ),
+      ),
+  ],
+),
+
+                        ),
+                      ],
+                    );
+                  } else if (state is FetchUnitErrorState) {
+                    return Container(
+                      height: ResponsiveUtils.hp(6),
+                      width: ResponsiveUtils.screenWidth,
+                      decoration: BoxDecoration(
+                          color: Appcolors.kwhiteColor,
+                          border: Border.all(
+                              width: .5, color: Appcolors.kprimarycolor)),
+                      child: Center(
+                          child: TextStyles.caption(
+                              text: state.message, color: Appcolors.kredColor)),
+                    );
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
+              ),
+              //   if (_distance != null)
+
               ResponsiveSizedBox.height20,
               TextStyles.medium(
                   text: 'Is there Power supply?',
@@ -951,109 +1261,17 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   }
 
   ///////////////
-  // Future<void> openGoogleMaps(double latitude, double longitude) async {
-  //   String googleMapsUrl =
-  //       "https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving";
 
-  //   if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
-  //     await launchUrl(Uri.parse(googleMapsUrl));
-  //   } else {
-  //     throw "Could not open Google Maps.";
-  //   }
-  // }
-Future<void> openGoogleMaps(double latitude, double longitude) async {
-  String googleMapsUrl =
-      "https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving";
+  Future<void> openGoogleMaps(double latitude, double longitude) async {
+    String googleMapsUrl =
+        "https://www.google.com/maps/dir/?api=1&destination=$latitude,$longitude&travelmode=driving";
 
-  if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
-    await launchUrl(Uri.parse(googleMapsUrl));
-  } else {
-    throw "Could not open Google Maps.";
-  }
-}
-////////////////
-  Future<void> locatePlace(String selectedArea) async {
-    try {
-      // Call calculateDistance to get coordinates
-      final areaCoords = sampleAreaCoordinates[selectedArea];
-      final latitude = areaCoords?['latitude'];
-      final longitude = areaCoords?['longitude'];
-
-      print('Coordinates: ($latitude, $longitude)');
-
-      // Open Google Maps
-      await openGoogleMaps(latitude!, longitude!);
-    } catch (e) {
-      print('Error: $e');
+    if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+      await launchUrl(Uri.parse(googleMapsUrl));
+    } else {
+      throw "Could not open Google Maps.";
     }
   }
 }
 
 /////////////
-class LocationService {
-  Future<Position> getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      throw 'Location services are disabled.';
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        throw 'Location permissions are denied';
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      throw 'Location permissions are permanently denied';
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
-
-  Future<double> calculateDistance(String selectedArea) async {
-    try {
-      Position currentLocation = await getCurrentLocation();
-
-      // Get coordinates for selected area
-      final areaCoords = sampleAreaCoordinates[selectedArea];
-      if (areaCoords == null) {
-        throw 'Area coordinates not found';
-      }
-
-      double distanceInMeters = Geolocator.distanceBetween(
-        currentLocation.latitude,
-        currentLocation.longitude,
-        areaCoords['latitude']!,
-        areaCoords['longitude']!,
-      );
-
-      return distanceInMeters / 1000; // Convert to kilometers
-    } catch (e) {
-      throw 'Error calculating distance: $e';
-    }
-  }
-}
-
-final Map<String, Map<String, double>> sampleAreaCoordinates = {
-  'Calicut': {
-    'latitude': 11.2588,
-    'longitude': 75.7804,
-  },
-  'Kochi': {
-    'latitude': 9.9312,
-    'longitude': 76.2673,
-  },
-  'Trivandrum': {
-    'latitude': 8.5241,
-    'longitude': 76.9366,
-  },
-  'Thrissur': {
-    'latitude': 10.5276,
-    'longitude': 76.2144,
-  },
-};

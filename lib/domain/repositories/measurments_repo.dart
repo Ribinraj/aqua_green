@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:aqua_green/core/urls.dart';
+import 'package:aqua_green/data/area_model.dart';
+import 'package:aqua_green/data/route_model.dart';
+import 'package:aqua_green/data/unit_model.dart';
+import 'package:aqua_green/presentation/widgets/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiResponse<T> {
   final T? data;
@@ -20,188 +23,163 @@ class ApiResponse<T> {
   });
 }
 
-class Loginrepo {
+class MeasurmentsRepo {
   final http.Client client;
-  Loginrepo({http.Client? client}) : client = client ?? http.Client();
-  Future<ApiResponse> userlogin(
-      {required String mobileNumber, required String password}) async {
-  
+  MeasurmentsRepo({http.Client? client}) : client = client ?? http.Client();
+  //////////fetch routes ////////////////
+  Future<ApiResponse<List<RouteModel>>> fetcchroutes() async {
     try {
+      final token = await getUserToken();
       var response = await client.post(
-        Uri.parse('${Endpoints.baseUrl}${Endpoints.login}'),
+        Uri.parse('${Endpoints.baseUrl}${Endpoints.fetchroutes}'),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (!responseData["error"] && responseData["status"] == 200) {
+        final List<dynamic> jsonList = responseData['data'];
+        final List<RouteModel> routeList =
+            jsonList.map((json) => RouteModel.fromJson(json)).toList();
+
+        return ApiResponse(
+          data: routeList,
+          message: responseData['message'] ?? 'Success',
+          error: false,
+          status: responseData["status"],
+        );
+      } else {
+        return ApiResponse(
+          data: null,
+          message: responseData['message'] ?? 'Something went wrong',
+          error: true,
+          status: responseData["status"],
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      log(e.toString());
+      return ApiResponse(
+        data: null,
+        message: 'Network or server error occurred',
+        error: true,
+        status: 500,
+      );
+    }
+  }
+
+//////////fetch area///////////////
+  Future<ApiResponse<List<AreaModel>>> fetcharea() async {
+    try {
+      final token = await getUserToken();
+      var response = await client.post(
+        Uri.parse('${Endpoints.baseUrl}${Endpoints.fetchareas}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (!responseData["error"] && responseData["status"] == 200) {
+        final List<dynamic> jsonList = responseData['data'];
+        final List<AreaModel> arealist =
+            jsonList.map((json) => AreaModel.fromJson(json)).toList();
+
+        return ApiResponse(
+          data: arealist,
+          message: responseData['message'] ?? 'Success',
+          error: false,
+          status: responseData["status"],
+        );
+      } else {
+        return ApiResponse(
+          data: null,
+          message: responseData['message'] ?? 'Something went wrong',
+          error: true,
+          status: responseData["status"],
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      log(e.toString());
+      return ApiResponse(
+        data: null,
+        message: 'Network or server error occurred',
+        error: true,
+        status: 500,
+      );
+    }
+  }
+
+  //////////fetch unit///////////////
+  Future<ApiResponse<List<UnitModel>>> fetchunit() async {
+    try {
+      final token = await getUserToken();
+      var response = await client.post(
+        Uri.parse('${Endpoints.baseUrl}${Endpoints.fetchUnits}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (!responseData["error"] && responseData["status"] == 200) {
+        final List<dynamic> jsonList = responseData['data'];
+        final List<UnitModel> unitlist =
+            jsonList.map((json) => UnitModel.fromJson(json)).toList();
+
+        return ApiResponse(
+          data: unitlist,
+          message: responseData['message'] ?? 'Success',
+          error: false,
+          status: responseData["status"],
+        );
+      } else {
+        return ApiResponse(
+          data: null,
+          message: responseData['message'] ?? 'Something went wrong',
+          error: true,
+          status: responseData["status"],
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      log(e.toString());
+      return ApiResponse(
+        data: null,
+        message: 'Network or server error occurred',
+        error: true,
+        status: 500,
+      );
+    }
+  }
+////updaatunit///////////
+  Future<ApiResponse> updateunit(
+      {required String unitId, required String latitude, required String longitude}) async {
+  
+    try {
+       final token = await getUserToken();
+      var response = await client.post(
+        Uri.parse('${Endpoints.baseUrl}${Endpoints.updateUnits}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
         },
         body: jsonEncode(
-            {'userMobileNumber': mobileNumber, 'userPassword': password}),
+            {'unitId': unitId, 'latt': latitude ,'long':longitude}),
       );
 
       final responseData = jsonDecode(response.body);
       // log(response.toString());
       if (!responseData["error"] && responseData["status"] == 200) {
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        preferences.setString('USER_TOKEN', responseData["data"]["token"]);
-
-        return ApiResponse(
-          data: null,
-          message: responseData['messages'] ?? 'Success',
-          error: false,
-          status: responseData["status"],
-        );
-      } else {
-        return ApiResponse(
-          data: null,
-          message: responseData['messages'] ?? 'Something went wrong',
-          error: true,
-          status: responseData["status"],
-        );
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-      log(e.toString());
-      return ApiResponse(
-        data: null,
-        message: 'Network or server error occurred',
-        error: true,
-        status: 500,
-      );
-    }
-  }
-
-//sendotp//
-  Future<ApiResponse<String>> sendotp({required String mobilenumber}) async {
-    try {
-      debugPrint(mobilenumber);
-      var response = await client.post(
-          Uri.parse('${Endpoints.baseUrl}${Endpoints.sendOtp}'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({'userMobileNumber': mobilenumber}));
-      final responseData = jsonDecode(response.body);
-      //log(responseData);
-      if (!responseData["error"] && responseData["status"] == 200) {
-        return ApiResponse(
-          data: responseData["data"]["userId"],
-          message: responseData['message'] ?? 'Success',
-          error: false,
-          status: responseData["status"],
-        );
-      } else {
-        return ApiResponse(
-          data: null,
-          message: responseData['message'] ?? 'Something went wrong',
-          error: true,
-          status: responseData["status"],
-        );
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-      log(e.toString());
-      return ApiResponse(
-        data: null,
-        message: 'Network or server error occurred',
-        error: true,
-        status: 500,
-      );
-    }
-  }
-//resendotp//
-  Future<ApiResponse<String>> resendotp({required String userId}) async {
-    try {
-    
-      var response = await client.post(
-          Uri.parse('${Endpoints.baseUrl}${Endpoints.resendOtp}'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({'userId': userId}));
-      final responseData = jsonDecode(response.body);
-      //log(responseData);
-      if (!responseData["error"] && responseData["status"] == 200) {
-        return ApiResponse(
-          data: responseData["data"]["userId"],
-          message: responseData['message'] ?? 'Success',
-          error: false,
-          status: responseData["status"],
-        );
-      } else {
-        return ApiResponse(
-          data: null,
-          message: responseData['message'] ?? 'Something went wrong',
-          error: true,
-          status: responseData["status"],
-        );
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-      log(e.toString());
-      return ApiResponse(
-        data: null,
-        message: 'Network or server error occurred',
-        error: true,
-        status: 500,
-      );
-    }
-  }
-
-//verifyotp//
-  Future<ApiResponse> verifyotp({required userId, required otp}) async {
-    try {
-      debugPrint('otp$otp');
-      var response = await client.post(Uri.parse('${Endpoints.baseUrl}${Endpoints.verifyOtp}'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({'userId': userId, 'userOTP': otp}));
-      final responseData = jsonDecode(response.body);
-      if (!responseData["error"] && responseData["status"] == 200) {
-        // SharedPreferences preferences = await SharedPreferences.getInstance();
-        // // preferences.setBool('LOGIN', true);
-        // preferences.setString('USER_TOKEN', responseData["data"]["token"]);
-        return ApiResponse(
-          data: null,
-          message: responseData['message'] ?? 'Success',
-          error: false,
-          status: responseData["status"],
-        );
-      } else {
-        return ApiResponse(
-          data: null,
-          message: responseData['message'] ?? 'Something went wrong',
-          error: true,
-          status: responseData["status"],
-        );
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-      log(e.toString());
-      return ApiResponse(
-        data: null,
-        message: 'Network or server error occurred',
-        error: true,
-        status: 500,
-      );
-    }
-  }
-///updatepassoword//
- Future<ApiResponse> updatepassword(
-      {required String password, required String userId}) async {
-  
-    try {
-      var response = await client.post(
-        Uri.parse('${Endpoints.baseUrl}${Endpoints.updatepassord}'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(
-            {'userPassword': password, 'confirmPassword': password,'userId':userId}),
-      );
-
-      final responseData = jsonDecode(response.body);
-      // log(response.toString());
-      if (!responseData["error"] && responseData["status"] == 200) {
-     
+      
 
         return ApiResponse(
           data: null,
@@ -228,7 +206,6 @@ class Loginrepo {
       );
     }
   }
-
   void dispose() {
     client.close();
   }
