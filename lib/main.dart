@@ -2,10 +2,12 @@ import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
 import 'package:aqua_green/domain/repositories/login_repo.dart';
 import 'package:aqua_green/domain/repositories/measurments_repo.dart';
+import 'package:aqua_green/presentation/blocs/add_measurment/add_measurment_bloc.dart';
 import 'package:aqua_green/presentation/blocs/bottom_navigation_bloc/bottom_navigation_bloc.dart';
 import 'package:aqua_green/presentation/blocs/connectivity_bloc/connectivity_bloc.dart';
 import 'package:aqua_green/presentation/blocs/cubit/toggle_password_cubit.dart';
 import 'package:aqua_green/presentation/blocs/fetch_area/fetch_area_bloc.dart';
+import 'package:aqua_green/presentation/blocs/fetch_reportbloc/fetch_report_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_route/fetch_route_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_unit/fetch_unit_bloc.dart';
 import 'package:aqua_green/presentation/blocs/image_picker/image_picker_bloc.dart';
@@ -74,6 +76,12 @@ class MyApp extends StatelessWidget {
         ),
            BlocProvider(
           create: (context) => UpdateUnitsBloc(repository: measurmentrepo),
+        ),
+             BlocProvider(
+          create: (context) => AddMeasurmentBloc(repository: measurmentrepo),
+        ),
+              BlocProvider(
+          create: (context) => FetchReportBloc(repository: measurmentrepo),
         ),
       ],
       child: MaterialApp(

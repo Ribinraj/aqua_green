@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:aqua_green/core/urls.dart';
 import 'package:aqua_green/data/area_model.dart';
+import 'package:aqua_green/data/plant_datamodel.dart';
+import 'package:aqua_green/data/reports.dart';
 import 'package:aqua_green/data/route_model.dart';
 import 'package:aqua_green/data/unit_model.dart';
 import 'package:aqua_green/presentation/widgets/shared_preference.dart';
@@ -160,29 +162,118 @@ class MeasurmentsRepo {
       );
     }
   }
+
 ////updaatunit///////////
   Future<ApiResponse> updateunit(
-      {required String unitId, required String latitude, required String longitude}) async {
+      {required String unitId,
+      required String latitude,
+      required String longitude}) async {
+    log(unitId);
   
     try {
-       final token = await getUserToken();
+      final token = await getUserToken();
       var response = await client.post(
         Uri.parse('${Endpoints.baseUrl}${Endpoints.updateUnits}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token,
         },
-        body: jsonEncode(
-            {'unitId': unitId, 'latt': latitude ,'long':longitude}),
+        body:
+            jsonEncode({'unitId': unitId, 'latt': latitude, 'long': longitude}),
       );
 
       final responseData = jsonDecode(response.body);
       // log(response.toString());
       if (!responseData["error"] && responseData["status"] == 200) {
-      
-
         return ApiResponse(
           data: null,
+          message: responseData['message'] ?? 'Success',
+          error: false,
+          status: responseData["status"],
+        );
+      } else {
+        return ApiResponse(
+          data: null,
+          message: responseData['message'] ?? 'Something went wrong',
+          error: true,
+          status: responseData["status"],
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      log(e.toString());
+      return ApiResponse(
+        data: null,
+        message: 'Network or server error occurred',
+        error: true,
+        status: 500,
+      );
+    }
+  }
+
+  ///////////addmeasurments////////////
+  Future<ApiResponse> addmeasurments(
+      {required WaterPlantDataModel datas}) async {
+    // log(datas.pictures.length.toString());
+    log(datas.toJson().toString());
+    try {
+      final token = await getUserToken();
+      var response = await client.post(
+          Uri.parse('${Endpoints.baseUrl}${Endpoints.addmeasure}'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+          body: jsonEncode(datas));
+      log('Response Data: ${response.body}');
+      final responseData = jsonDecode(response.body);
+      // log(responseData.toString());
+      if (!responseData["error"] && responseData["status"] == 200) {
+        return ApiResponse(
+          data: null,
+          message: responseData['message'] ?? 'Success',
+          error: false,
+          status: responseData["status"],
+        );
+      } else {
+        return ApiResponse(
+          data: null,
+          message: responseData['message'] ?? 'Something went wrong',
+          error: true,
+          status: responseData["status"],
+        );
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      log(e.toString());
+      return ApiResponse(
+        data: null,
+        message: 'Network or server error occurred',
+        error: true,
+        status: 500,
+      );
+    }
+  }
+  Future<ApiResponse<List<ReportModel>>> fetchreport() async {
+    try {
+      final token = await getUserToken();
+      var response = await client.post(
+        Uri.parse('${Endpoints.baseUrl}${Endpoints.fetchreport}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (!responseData["error"] && responseData["status"] == 200) {
+        final List<dynamic> jsonList = responseData['data'];
+        final List<ReportModel> reportlist =
+            jsonList.map((json) => ReportModel.fromJson(json)).toList();
+
+        return ApiResponse(
+          data: reportlist,
           message: responseData['message'] ?? 'Success',
           error: false,
           status: responseData["status"],

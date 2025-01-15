@@ -2,8 +2,10 @@ import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
 import 'package:aqua_green/data/area_model.dart';
+import 'package:aqua_green/data/plant_datamodel.dart';
 import 'package:aqua_green/data/route_model.dart';
 import 'package:aqua_green/data/unit_model.dart';
+import 'package:aqua_green/presentation/blocs/add_measurment/add_measurment_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_area/fetch_area_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_route/fetch_route_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_unit/fetch_unit_bloc.dart';
@@ -15,12 +17,16 @@ import 'package:aqua_green/presentation/screens/screen_updateunits/widgets/disab
 import 'package:aqua_green/presentation/widgets/custom_drawer.dart';
 import 'package:aqua_green/presentation/widgets/custom_imagecontainer.dart';
 import 'package:aqua_green/presentation/widgets/custom_multiimage_container.dart';
+import 'package:aqua_green/presentation/widgets/custom_snackbar.dart';
 import 'package:aqua_green/presentation/widgets/custom_submitbutton.dart';
 import 'package:aqua_green/presentation/widgets/custom_textfield_addmeasure.dart';
+import 'package:aqua_green/presentation/widgets/customrout_mainpage.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,12 +41,18 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   final LocationService _locationService = LocationService();
   double? _distance;
 
-  Future<void> _updateDistance(
-      double targetLatitude, double targetLongitude) async {
+  Future<void> _updateDistance(double? latitude, double? longitude) async {
+    if (latitude == null || longitude == null) {
+      setState(() {
+        _distance = null; // Reset distance when coordinates are null
+      });
+      return;
+    }
+
     try {
       double distance = await _locationService.calculateDistance(
-        targetLatitude,
-        targetLongitude,
+        latitude,
+        longitude,
       );
       setState(() {
         _distance = distance;
@@ -101,6 +113,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   UnitModel? selectedUnitModel;
   double? selectedLatitude;
   double? selectedLongitude;
+  bool isloading = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -420,83 +433,221 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
           ),
         ),
         ResponsiveSizedBox.height30,
-        SubmitButton(
-            ontap: () async {
-              if (_formKey.currentState!.validate()) {
-                if (!validateCommonFields()) return;
+        BlocConsumer<AddMeasurmentBloc, AddMeasurmentState>(
+          listener: (context, state) {
+            if (state is AddMeasurmentSuccessState) {
+              setState(() {
+                isloading = false;
+              });
+              CustomSnackBar.show(
+                  context: context,
+                  title: 'Success',
+                  message: 'Measurement recorded successfully',
+                  contentType: ContentType.success);
+            } else if (state is AddMeasurmentErrorState) {
+              setState(() {
+                isloading = false;
+              });
+              CustomSnackBar.show(
+                  context: context,
+                  title: 'Error',
+                  message: state.message,
+                  contentType: ContentType.failure);
+            }
+          },
+          builder: (context, state) {
+            if (state is AddMeasurmentLoadingState || isloading) {
+              return Container(
+                height: ResponsiveUtils.hp(6),
+                width: ResponsiveUtils.screenWidth,
+                color: Appcolors.kprimarycolor,
+                child: Center(
+                    child: SpinKitWave(
+                  color: Appcolors.kwhiteColor,
+                  size: ResponsiveUtils.wp(6),
+                )),
+              );
+            }
+            return SubmitButton(
+                ontap: () async {
+                  if (_formKey.currentState!.validate()) {
+                    if (!validateCommonFields()) return;
 
-                if (!validateYesFields()) return;
-                if (!validateYesImages()) return;
-                final imagePickerState = context.read<ImagePickerBloc>().state;
+                    if (!validateYesFields()) return;
+                    if (!validateYesImages()) return;
+                    // Set processing state before starting image processing
+                    setState(() {
+                      isloading = true;
+                    });
 
-                // Get all images from their respective states
-                final meterImages =
-                    (imagePickerState['Meter Image'] as ImagePickerSuccessState)
-                        .images;
-                final flowrangeImages = (imagePickerState['Flow Range Image']
-                        as ImagePickerSuccessState)
-                    .images;
-                final filterChemicalImages =
-                    (imagePickerState['Filter Chemical Image']
-                            as ImagePickerSuccessState)
-                        .images;
-                final coinreadingImages =
-                    (imagePickerState['Coin Reading Image']
-                            as ImagePickerSuccessState)
-                        .images;
-                final plantFrontImages = (imagePickerState['Plant Front Image']
-                        as ImagePickerSuccessState)
-                    .images;
-                final plantBackImages = (imagePickerState['Plant Back Image']
-                        as ImagePickerSuccessState)
-                    .images;
-                final plantInsideImages =
-                    (imagePickerState['Plant Inside Image']
-                            as ImagePickerSuccessState)
-                        .images;
-                final additionalImages = (imagePickerState['Additional Images']
-                        as ImagePickerSuccessState)
-                    .images;
+                    try {
+                      Position currentlocation =
+                          await LocationService().getCurrentLocation();
+                      final imagePickerState =
+                          context.read<ImagePickerBloc>().state;
 
-                // Since these are single-image containers, we take the first image
-                // final meterImage = meterImages.first;
-                // final filterchemicalImage = filterChemicalImages.first;
-                // final coinreadingImage = coinreadingImages.first;
-                // final flowrangeImage = flowrangeImages.first;
-                // final plantFrontImage = plantFrontImages.first;
-                // final plantBackImage = plantBackImages.first;
-                // final plantInsideImage = plantInsideImages.first;
-                // // Process individual images
-                final processedMeterImage =
-                    await ImageProcessor.processImage(meterImages.first);
-                final processedFilterChemicalImage =
-                    await ImageProcessor.processImage(
-                        filterChemicalImages.first);
-                final processedCoinReadingImage =
-                    await ImageProcessor.processImage(coinreadingImages.first);
-                final processedFlowRangeImage =
-                    await ImageProcessor.processImage(flowrangeImages.first);
-                final processedPlantFrontImage =
-                    await ImageProcessor.processImage(plantFrontImages.first);
-                final processedPlantBackImage =
-                    await ImageProcessor.processImage(plantBackImages.first);
-                final processedPlantInsideImage =
-                    await ImageProcessor.processImage(plantInsideImages.first);
+                      // Get all images from their respective states
+                      final meterImages = (imagePickerState['Meter Image']
+                              as ImagePickerSuccessState)
+                          .images;
+                      final flowrangeImages =
+                          (imagePickerState['Flow Range Image']
+                                  as ImagePickerSuccessState)
+                              .images;
+                      final filterChemicalImages =
+                          (imagePickerState['Filter Chemical Image']
+                                  as ImagePickerSuccessState)
+                              .images;
+                      final coinreadingImages =
+                          (imagePickerState['Coin Reading Image']
+                                  as ImagePickerSuccessState)
+                              .images;
+                      final plantFrontImages =
+                          (imagePickerState['Plant Front Image']
+                                  as ImagePickerSuccessState)
+                              .images;
+                      final plantBackImages =
+                          (imagePickerState['Plant Back Image']
+                                  as ImagePickerSuccessState)
+                              .images;
+                      final plantInsideImages =
+                          (imagePickerState['Plant Inside Image']
+                                  as ImagePickerSuccessState)
+                              .images;
+                      final additionalImages =
+                          (imagePickerState['Additional Images']
+                                  as ImagePickerSuccessState)
+                              .images;
 
-// Process additional images
-                final processedAdditionalImages =
-                    await ImageProcessor.processMultipleImages(
-                        additionalImages);
+                      final processedMeterImage =
+                          await ImageProcessor.processImage(meterImages.first);
+                      final processedFilterChemicalImage =
+                          await ImageProcessor.processImage(
+                              filterChemicalImages.first);
+                      final processedCoinReadingImage =
+                          await ImageProcessor.processImage(
+                              coinreadingImages.first);
+                      final processedFlowRangeImage =
+                          await ImageProcessor.processImage(
+                              flowrangeImages.first);
+                      final processedPlantFrontImage =
+                          await ImageProcessor.processImage(
+                              plantFrontImages.first);
+                      final processedPlantBackImage =
+                          await ImageProcessor.processImage(
+                              plantBackImages.first);
+                      final processedPlantInsideImage =
+                          await ImageProcessor.processImage(
+                              plantInsideImages.first);
 
-// Now you can send these processed images to your API
-                debugPrint('Submitting Yes case with:');
-                debugPrint('Route: $selectedRoute');
-                debugPrint('Area: $selectedArea');
-                debugPrint('Product Flow: $selectedProductFlow');
-                debugPrint('Reject Flow: $selectedRejectFlow');
-              }
-            },
-            text: 'Submit')
+                      // Process additional images
+                      final processedAdditionalImages =
+                          await ImageProcessor.processMultipleImages(
+                              additionalImages);
+                      ////////////////
+                      final List<Picture> pictures = [
+                        Picture(
+                          imageName: ImageProcessor.generateImageName('Meter'),
+                          pictureType: 'Meter',
+                          image: processedMeterImage,
+                        ),
+                        Picture(
+                          imageName:
+                              ImageProcessor.generateImageName('FlowRange'),
+                          pictureType: 'FlowRange',
+                          image: processedFlowRangeImage,
+                        ),
+                        Picture(
+                          imageName: ImageProcessor.generateImageName(
+                              'FilterChemical'),
+                          pictureType: 'FilterChemical',
+                          image: processedFilterChemicalImage,
+                        ),
+                        Picture(
+                          imageName:
+                              ImageProcessor.generateImageName('CoinReading'),
+                          pictureType: 'CoinReading',
+                          image: processedCoinReadingImage,
+                        ),
+                        Picture(
+                          imageName:
+                              ImageProcessor.generateImageName('PlantFront'),
+                          pictureType: 'PlantFront',
+                          image: processedPlantFrontImage,
+                        ),
+                        Picture(
+                          imageName:
+                              ImageProcessor.generateImageName('PlantBack'),
+                          pictureType: 'PlantBack',
+                          image: processedPlantBackImage,
+                        ),
+                        Picture(
+                          imageName:
+                              ImageProcessor.generateImageName('PlantInside'),
+                          pictureType: 'PlantInside',
+                          image: processedPlantInsideImage,
+                        ),
+                        // Handle additional images with index
+                        ...List.generate(
+                            processedAdditionalImages.length,
+                            (index) => Picture(
+                                  imageName: ImageProcessor.generateImageName(
+                                      'Additional_$index'),
+                                  pictureType: 'Additional',
+                                  image: processedAdditionalImages[index],
+                                )),
+                      ];
+                      if (!mounted) return;
+                      //////////////
+                      context.read<AddMeasurmentBloc>().add(
+                          AddMeasurmentButtonclickEvent(
+                              datas:
+                                  WaterPlantDataModel(
+                                      unitId: unitController.text,
+                                      areaId: areaController.text,
+                                      routeId: routeController.text,
+                                      latt: currentlocation.latitude.toString(),
+                                      long:
+                                          currentlocation.longitude.toString(),
+                                      productFlow: productFlowController.text,
+                                      rejectFlow: rejectflowController.text,
+                                      sandFilterPressure:
+                                          sandfilterPressureController.text,
+                                      carbonFilterPressure:
+                                          carbonfilterPressureController.text,
+                                      systemPressure:
+                                          systemPressureController.text,
+                                      tds: tdsController.text,
+                                      waterLtrsReading:
+                                          waterlittersReadingController.text,
+                                      coinMeterReading:
+                                          coin_roWateterReadingController.text,
+                                      kebMeterReading:
+                                          kebmeterReadingController.text,
+                                      pictures: pictures)));
+                    } catch (e) {
+                      setState(() {
+                        isloading = false;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text('Error processing images: ${e.toString()}'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  } else {
+                    CustomSnackBar.show(
+                        context: context,
+                        title: 'Error',
+                        message: 'fill all fields',
+                        contentType: ContentType.failure);
+                  }
+                },
+                text: 'Submit');
+          },
+        )
       ],
     );
   }
@@ -585,69 +736,146 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
           ),
         ),
         ResponsiveSizedBox.height30,
-        // SubmitButton(
-        //   ontap: () {
-        //     if (_formKey.currentState!.validate()) {
-        //       if (!validateCommonFields()) return;
-        //       if (!validateNOImages()) return;
-        //       final imagePickerState = context.read<ImagePickerBloc>().state;
-        //       final meterImageState =
-        //           imagePickerState['Meter Image'] as ImagePickerSuccessState;
-        //       final plantImageState =
-        //           imagePickerState['Plant Image'] as ImagePickerSuccessState;
-
-        //       final meterImage = meterImageState.imageFile;
-        //       final plantImage = plantImageState.imageFile;
-
-        //       debugPrint('Submitting No case with:');
-        //       debugPrint('Route: $selectedRoute');
-        //       debugPrint('Area: $selectedArea');
-        //       debugPrint('Meter Image: ${meterImage!.path}');
-        //       debugPrint('Plant Image: ${plantImage!.path}');
-        //     }
-        //   },
-        //   text: 'Submit',
-        // )
-        SubmitButton(
-          ontap: () {
-            if (_formKey.currentState!.validate()) {
-              if (!validateCommonFields()) return;
-              if (!validateNOImages()) return;
-
-              final imagePickerState = context.read<ImagePickerBloc>().state;
-
-              // Get all images from their respective states
-              final meterImages =
-                  (imagePickerState['Meter Image'] as ImagePickerSuccessState)
-                      .images;
-              final plantFrontImages = (imagePickerState['Plant Front Image']
-                      as ImagePickerSuccessState)
-                  .images;
-              final plantBackImages = (imagePickerState['Plant Back Image']
-                      as ImagePickerSuccessState)
-                  .images;
-              final plantInsideImages = (imagePickerState['Plant Inside Image']
-                      as ImagePickerSuccessState)
-                  .images;
-
-              // Since these are single-image containers, we take the first image
-              final meterImage = meterImages.first;
-              final plantFrontImage = plantFrontImages.first;
-              final plantBackImage = plantBackImages.first;
-              final plantInsideImage = plantInsideImages.first;
-
-              debugPrint('Submitting No case with:');
-              debugPrint('Route: $selectedRoute');
-              debugPrint('Area: $selectedArea');
-              debugPrint('Meter Image: ${meterImage.path}');
-              debugPrint('Plant Front Image: ${plantFrontImage.path}');
-              debugPrint('Plant Back Image: ${plantBackImage.path}');
-              debugPrint('Plant Inside Image: ${plantInsideImage.path}');
-
-              // Add your submission logic here
+        BlocConsumer<AddMeasurmentBloc, AddMeasurmentState>(
+          listener: (context, state) {
+            if (state is AddMeasurmentSuccessState) {
+              setState(() {
+                isloading = false;
+              });
+              CustomSnackBar.show(
+                  context: context,
+                  title: 'Success',
+                  message: 'Measurement recorded successfully',
+                  contentType: ContentType.success);
+            } else if (state is AddMeasurmentErrorState) {
+              setState(() {
+                isloading = false;
+              });
+              CustomSnackBar.show(
+                  context: context,
+                  title: 'Error',
+                  message: state.message,
+                  contentType: ContentType.failure);
             }
           },
-          text: 'Submit',
+          builder: (context, state) {
+            if (state is AddMeasurmentLoadingState || isloading) {
+              return Container(
+                height: ResponsiveUtils.hp(6),
+                width: ResponsiveUtils.screenWidth,
+                color: Appcolors.kprimarycolor,
+                child: Center(
+                    child: SpinKitWave(
+                  color: Appcolors.kwhiteColor,
+                  size: ResponsiveUtils.wp(6),
+                )),
+              );
+            }
+            return SubmitButton(
+              ontap: () async {
+                if (_formKey.currentState!.validate()) {
+                  if (!validateCommonFields()) return;
+                  if (!validateNOImages()) return;
+                  setState(() {
+                    isloading = true;
+                  });
+                  try {
+                    Position currentlocation =
+                        await LocationService().getCurrentLocation();
+                    final imagePickerState =
+                        context.read<ImagePickerBloc>().state;
+
+                    // Get all images from their respective states
+                    final meterImages = (imagePickerState['Meter Image']
+                            as ImagePickerSuccessState)
+                        .images;
+
+                    final plantFrontImages =
+                        (imagePickerState['Plant Front Image']
+                                as ImagePickerSuccessState)
+                            .images;
+                    final plantBackImages =
+                        (imagePickerState['Plant Back Image']
+                                as ImagePickerSuccessState)
+                            .images;
+                    final plantInsideImages =
+                        (imagePickerState['Plant Inside Image']
+                                as ImagePickerSuccessState)
+                            .images;
+
+                    final processedMeterImage =
+                        await ImageProcessor.processImage(meterImages.first);
+
+                    final processedPlantFrontImage =
+                        await ImageProcessor.processImage(
+                            plantFrontImages.first);
+                    final processedPlantBackImage =
+                        await ImageProcessor.processImage(
+                            plantBackImages.first);
+                    final processedPlantInsideImage =
+                        await ImageProcessor.processImage(
+                            plantInsideImages.first);
+
+                    ////////////////
+                    final List<Picture> pictures = [
+                      Picture(
+                        imageName: ImageProcessor.generateImageName('Meter'),
+                        pictureType: 'Meter',
+                        image: processedMeterImage,
+                      ),
+                      Picture(
+                        imageName:
+                            ImageProcessor.generateImageName('PlantFront'),
+                        pictureType: 'PlantFront',
+                        image: processedPlantFrontImage,
+                      ),
+                      Picture(
+                        imageName:
+                            ImageProcessor.generateImageName('PlantBack'),
+                        pictureType: 'PlantBack',
+                        image: processedPlantBackImage,
+                      ),
+                      Picture(
+                        imageName:
+                            ImageProcessor.generateImageName('PlantInside'),
+                        pictureType: 'PlantInside',
+                        image: processedPlantInsideImage,
+                      ),
+                    ];
+                    if (!mounted) return;
+                    //////////////
+                    context.read<AddMeasurmentBloc>().add(
+                        AddMeasurmentButtonclickEvent(
+                            datas: WaterPlantDataModel(
+                                unitId: unitController.text,
+                                areaId: areaController.text,
+                                routeId: routeController.text,
+                                latt: currentlocation.latitude.toString(),
+                                long: currentlocation.longitude.toString(),
+                                pictures: pictures)));
+                  } catch (e) {
+                    setState(() {
+                      isloading = false;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content:
+                            Text('Error processing images: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                } else {
+                  CustomSnackBar.show(
+                      context: context,
+                      title: 'Error',
+                      message: 'fill all fields',
+                      contentType: ContentType.failure);
+                }
+              },
+              text: 'Submit',
+            );
+          },
         )
       ],
     );
@@ -686,35 +914,6 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
     return true;
   }
 
-  // Validation function for images in No case
-  // bool validateNOImages() {
-  //   final imagePickerState = context.read<ImagePickerBloc>().state;
-
-  //   final meterImageState = imagePickerState['Meter Image'];
-  //   final plantFrontImageState = imagePickerState['Plant Front Image'];
-  //   final plantBackImageState = imagePickerState['Plant Back Image'];
-  //   final plantInsideImageState = imagePickerState['Plant Inside Image'];
-
-  //   final hasMeterImage = meterImageState is ImagePickerSuccessState;
-  //   final hasPlantFrontImage = plantFrontImageState is ImagePickerSuccessState;
-  //   final hasPlantBackImage = plantBackImageState is ImagePickerSuccessState;
-  //   final hasPlantInsideImage =
-  //       plantInsideImageState is ImagePickerSuccessState;
-
-  //   if (!hasMeterImage ||
-  //       !hasPlantFrontImage ||
-  //       !hasPlantBackImage ||
-  //       !hasPlantInsideImage) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text('Please capture both Meter and Plant images'),
-  //         backgroundColor: Colors.red,
-  //       ),
-  //     );
-  //     return false;
-  //   }
-  //   return true;
-  // }
   bool validateNOImages() {
     final imagePickerState = context.read<ImagePickerBloc>().state;
     final meterImageState = imagePickerState['Meter Image'];
@@ -1093,12 +1292,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                               selectedUnit = unit?.unitName;
                               if (unit != null) {
                                 unitController.text = unit.unitId;
-                                selectedLatitude = unit.latitude;
-                                selectedLongitude = unit.longitude;
-                                _updateDistance(
-                                    unit.latitude!, unit.longitude!);
+                                _updateDistance(unit.latitude, unit.longitude);
                               } else {
                                 unitController.clear();
+                                _distance = null;
                               }
                             });
                           },
@@ -1116,45 +1313,8 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: ResponsiveUtils.wp(4)),
-        child: Row(
-  children: [
-    if (selectedLatitude == null && selectedLongitude == null)
-      TextStyles.medium(
-        text: 'Update Unit first',
-        color: Appcolors.kredColor,
-      )
-    else
-      TextStyles.medium(
-        text:
-            'Distance from current location: ${_distance != null ? _distance!.toStringAsFixed(2) : 'Processing'} km',
-        weight: FontWeight.bold,
-        color: Appcolors.kgreenColor,
-      ),
-    Spacer(),
-    if (_distance != null)
-      GestureDetector(
-        onTap: () {
-          if (selectedLatitude != null && selectedLongitude != null) {
-            openGoogleMaps(selectedLatitude!, selectedLongitude!);
-          }
-        },
-        child: Container(
-          padding: EdgeInsets.all(ResponsiveUtils.wp(1.5)),
-          decoration: BoxDecoration(
-            color: Appcolors.kprimarycolor.withOpacity(.7),
-            borderRadius: BorderRadius.circular(3),
-          ),
-          child: TextStyles.caption(
-            text: 'Locate',
-            color: Appcolors.kwhiteColor,
-            weight: FontWeight.bold,
-          ),
-        ),
-      ),
-  ],
-),
-
-                        ),
+                          child: buildDistanceDisplay(),
+                        )
                       ],
                     );
                   } else if (state is FetchUnitErrorState) {
@@ -1174,26 +1334,46 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                   }
                 },
               ),
-              //   if (_distance != null)
-
-              ResponsiveSizedBox.height20,
-              TextStyles.medium(
-                  text: 'Is there Power supply?',
-                  weight: FontWeight.bold,
-                  color: Appcolors.kdarkbluecolor),
-              ResponsiveSizedBox.height5,
-              dropdownTexfield(
-                  hintText: 'Yes/No',
-                  onChanged: (value) {
-                    setState(() {
-                      selectedYesNo = value!;
-                      yesNoController.text = value;
-                    });
-                  },
-                  list: yesNoOptions,
-                  isYesNo: true),
-              ResponsiveSizedBox.height30,
-              selectedYesNo == 'Yes' ? buildYesContent() : buildNoContent(),
+              if (selectedUnit == null)
+                SizedBox.shrink()
+              else if (selectedUnitModel?.latitude == null ||
+                  selectedUnitModel?.longitude == null)
+                Column(
+                  children: [
+                    ResponsiveSizedBox.height20,
+                    SubmitButton(
+                        ontap: () {
+                          navigateToMainPage(context, 1);
+                        },
+                        text: 'Update Location'),
+                  ],
+                )
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ResponsiveSizedBox.height20,
+                    TextStyles.medium(
+                        text: 'Is there Power supply?',
+                        weight: FontWeight.bold,
+                        color: Appcolors.kdarkbluecolor),
+                    ResponsiveSizedBox.height5,
+                    dropdownTexfield(
+                        hintText: 'Yes/No',
+                        onChanged: (value) {
+                          setState(() {
+                            selectedYesNo = value!;
+                            yesNoController.text = value;
+                          });
+                        },
+                        list: yesNoOptions,
+                        isYesNo: true),
+                    ResponsiveSizedBox.height30,
+                    selectedYesNo == 'Yes'
+                        ? buildYesContent()
+                        : buildNoContent(),
+                  ],
+                )
             ],
           ),
         ),
@@ -1260,6 +1440,61 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
     );
   }
 
+//////////////////
+// First create a separate widget for the distance display outside the unit builder
+  Widget buildDistanceDisplay() {
+    if (selectedUnit == null) {
+      return TextStyles.medium(
+        text: 'Select a unit to view distance',
+        weight: FontWeight.bold,
+        color: Appcolors.kdarkbluecolor,
+      );
+    }
+
+    if (selectedUnitModel?.latitude == null ||
+        selectedUnitModel?.longitude == null) {
+      return TextStyles.medium(
+        text: 'GPS coordinates for this unit is not set',
+        weight: FontWeight.bold,
+        color: Appcolors.kredColor,
+      );
+    }
+
+    return Row(
+      children: [
+        TextStyles.medium(
+          text: _distance != null
+              ? 'Distance from current location: ${_distance!.toStringAsFixed(2)} km'
+              : 'Calculating distance...',
+          weight: FontWeight.bold,
+          color: Appcolors.kgreenColor,
+        ),
+        Spacer(),
+        if (_distance != null)
+          GestureDetector(
+            onTap: () {
+              if (selectedUnitModel?.latitude != null &&
+                  selectedUnitModel?.longitude != null) {
+                openGoogleMaps(selectedUnitModel!.latitude!,
+                    selectedUnitModel!.longitude!);
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.all(ResponsiveUtils.wp(1.5)),
+              decoration: BoxDecoration(
+                color: Appcolors.kprimarycolor.withOpacity(.7),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: TextStyles.caption(
+                text: 'Locate',
+                color: Appcolors.kwhiteColor,
+                weight: FontWeight.bold,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
   ///////////////
 
   Future<void> openGoogleMaps(double latitude, double longitude) async {

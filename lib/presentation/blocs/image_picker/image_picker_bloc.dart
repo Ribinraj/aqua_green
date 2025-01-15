@@ -25,6 +25,7 @@ class ImagePickerBloc extends Bloc<ImagePickerEvent, Map<String, ImagePickerStat
   ImagePickerBloc() : super({}) {
     on<ImagePickedEvent>(_onAddImage);
     on<RemoveImageEvent>(_onRemoveImage);
+        
   }
 
   FutureOr<void> _onAddImage(ImagePickedEvent event, Emitter<Map<String, ImagePickerState>> emit) {
@@ -64,4 +65,5 @@ class ImagePickerBloc extends Bloc<ImagePickerEvent, Map<String, ImagePickerStat
       }
     }
   }
+  
 }

@@ -32,3 +32,4 @@ class RemoveImageEvent extends ImagePickerEvent {
     required this.source,
   });
 }
+

@@ -9,4 +9,6 @@ class Endpoints {
   static const fetchareas = 'masters/areas';
   static const fetchUnits = 'units/list';
   static const updateUnits = 'units/updatemap';
+  static const addmeasure = 'measurements/new';
+  static const fetchreport = 'measurements/list';
 }

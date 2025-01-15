@@ -1,4 +1,4 @@
-
+import 'dart:developer';
 
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
@@ -40,6 +40,7 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
   String? selectedUnit;
   AreaModel? selectedAreaModel;
   UnitModel? selectedUnitModel;
+  bool isloading = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -132,6 +133,7 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
                         unitController.clear();
                         if (route != null) {
                           routeController.text = route.routeId;
+                          log(routeController.text);
                           // Fetch areas for selected route
                           context.read<FetchAreaBloc>().add(
                               FetchAreaWithRouteId(routeId: route.routeId));
@@ -374,44 +376,66 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
             BlocConsumer<UpdateUnitsBloc, UpdateUnitsState>(
               listener: (context, state) {
                 if (state is UpdateUnitSuccessState) {
-                    CustomSnackBar.show(
-                                context: context,
-                                title: 'Success',
-                                message:state.message,
-                                contentType: ContentType.success);
-                }
-                else if(state is UpdateUnitErrorState){
-                    CustomSnackBar.show(
-                                context: context,
-                                title: 'Error!!',
-                                message:state.message,
-                                contentType: ContentType.failure);
+                    setState(() {
+        isloading = false;
+      });
+                  CustomSnackBar.show(
+                      context: context,
+                      title: 'Success',
+                      message: state.message,
+                      contentType: ContentType.success);
+                } else if (state is UpdateUnitErrorState) {
+                    setState(() {
+        isloading = false;
+      });
+                  CustomSnackBar.show(
+                      context: context,
+                      title: 'Error!!',
+                      message: state.message,
+                      contentType: ContentType.failure);
                 }
               },
               builder: (context, state) {
-                if (state is UpdateUnitLoadingState) {
-                     return Container(
-                        height: ResponsiveUtils.hp(6),
-                        width: ResponsiveUtils.screenWidth,
-                        color: Appcolors.kprimarycolor,
-                        child: Center(
-                            child: SpinKitWave(
-                          color: Appcolors.kwhiteColor,
-                          size: ResponsiveUtils.wp(6),
-                        )),
-                      );
+                if (state is UpdateUnitLoadingState || isloading) {
+                  return Container(
+                    height: ResponsiveUtils.hp(6),
+                    width: ResponsiveUtils.screenWidth,
+                    color: Appcolors.kprimarycolor,
+                    child: Center(
+                        child: SpinKitWave(
+                      color: Appcolors.kwhiteColor,
+                      size: ResponsiveUtils.wp(6),
+                    )),
+                  );
                 }
                 return SubmitButton(
                     ontap: () async {
-                      Position currentlocation =
-                          await LocationService().getCurrentLocation();
+                   
                       if (unitController.text.isNotEmpty) {
+                          setState(() {
+            isloading = true;
+          });
+          try {
+                Position currentlocation =
+                          await LocationService().getCurrentLocation();
                         context.read<UpdateUnitsBloc>().add(
                             UpdateUnitButtonclickEvent(
                                 unitId: unitController.text,
                                 lattitude: currentlocation.latitude.toString(),
                                 longitude:
                                     currentlocation.longitude.toString()));
+          } catch (e) {
+            setState(() {
+              isloading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error processing images: ${e.toString()}'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+                       
                       } else {
                         CustomSnackBar.show(
                             context: context,
@@ -428,6 +452,4 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
       ),
     );
   }
-
-
 }
