@@ -111,7 +111,7 @@ class WaterPlantDataModel {
   String routeId;
   String latt;
   String long;
-  String powerSupply;
+  String? powerSupply;
   String? productFlow;
   String? rejectFlow;
   String? sandFilterPressure;
@@ -129,7 +129,7 @@ class WaterPlantDataModel {
     required this.routeId,
     required this.latt,
     required this.long,
-    required this.powerSupply,
+    this.powerSupply,
     this.productFlow,
     this.rejectFlow,
     this.sandFilterPressure,

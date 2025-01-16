@@ -7,3 +7,7 @@ final class NavigateToPageEvent extends BottomNavigationEvent {
 
   NavigateToPageEvent({required this.pageIndex});
 }
+final class LockNavigationEvent extends BottomNavigationEvent {
+  final bool isLocked;
+  LockNavigationEvent({required this.isLocked});
+}

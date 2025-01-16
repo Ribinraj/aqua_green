@@ -6,6 +6,7 @@ import 'package:aqua_green/core/responsive_utils.dart';
 import 'package:aqua_green/data/area_model.dart';
 import 'package:aqua_green/data/route_model.dart';
 import 'package:aqua_green/data/unit_model.dart';
+import 'package:aqua_green/presentation/blocs/bottom_navigation_bloc/bottom_navigation_bloc.dart';
 
 import 'package:aqua_green/presentation/blocs/fetch_area/fetch_area_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_route/fetch_route_bloc.dart';
@@ -42,6 +43,7 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
   AreaModel? selectedAreaModel;
   UnitModel? selectedUnitModel;
   bool isloading = false;
+  bool isLocked = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -391,9 +393,8 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
                     areaController.clear();
                     routeController.clear();
                   });
-                  context.read<FetchRouteBloc>().add(FetchRouteInitialEvent());
-                  context.read<FetchAreaBloc>().add(FetchAreaInitialEvent());
-                  context.read<FetchUnitBloc>().add(FetchUnitInitialEvent());
+                                            context.read<BottomNavigationBloc>().add(
+                            LockNavigationEvent(isLocked: isLocked = false));
                   CustomSnackBar.show(
                       context: context,
                       title: 'Success',
@@ -403,6 +404,8 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
                   setState(() {
                     isloading = false;
                   });
+                                          context.read<BottomNavigationBloc>().add(
+                            LockNavigationEvent(isLocked: isLocked = false));
                   CustomSnackBar.show(
                       context: context,
                       title: 'Error!!',
@@ -429,6 +432,8 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
                         setState(() {
                           isloading = true;
                         });
+                        context.read<BottomNavigationBloc>().add(
+                            LockNavigationEvent(isLocked: isLocked = true));
                         try {
                           Position currentlocation =
                               await LocationService().getCurrentLocation();
@@ -443,6 +448,8 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
                           setState(() {
                             isloading = false;
                           });
+                                                  context.read<BottomNavigationBloc>().add(
+                            LockNavigationEvent(isLocked: isLocked = false));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(

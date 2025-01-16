@@ -64,7 +64,7 @@ class BottomNavigationWidget extends StatelessWidget {
       builder: (context, state) {
         return BottomNavigationBar(
           currentIndex: state.currentPageIndex,
-          onTap: (index) {
+          onTap:state.isLocked?null: (index) {
             context.read<BottomNavigationBloc>().add(
                   NavigateToPageEvent(pageIndex: index),
                 );

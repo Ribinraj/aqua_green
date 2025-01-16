@@ -11,9 +11,22 @@ class BottomNavigationBloc
   BottomNavigationBloc() : super(BottomNavigationInitial()) {
     on<BottomNavigationEvent>((event, emit) {});
     on<NavigateToPageEvent>(navigatetoPage);
+       on<LockNavigationEvent>(lockNavigation);
   }
 
   FutureOr<void> navigatetoPage(NavigateToPageEvent event, Emitter<BottomNavigationState> emit) {
-    emit(NavigationState(currentPageIndex: event.pageIndex));
+    if (!state.isLocked) {
+      emit(NavigationState(currentPageIndex: event.pageIndex,isLocked: state.isLocked));
+    }
+    
+  }
+    FutureOr<void> lockNavigation(
+    LockNavigationEvent event, 
+    Emitter<BottomNavigationState> emit
+  ) {
+    emit(NavigationState(
+      currentPageIndex: state.currentPageIndex,
+      isLocked: event.isLocked,
+    ));
   }
 }

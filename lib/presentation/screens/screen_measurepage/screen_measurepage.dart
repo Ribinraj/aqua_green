@@ -68,7 +68,8 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   final List<String> productflow =
       List.generate(20, (index) => ((index + 1) * 100).toString());
   final List<String> sandcarbonfilterPressure =
-      List.generate(20, (index) => ((index + 1) * 100).toString());
+      List.generate(8, (index) => ((index + 1) * 0.5).toString());
+
   final List<String> rejuctflow =
       List.generate(40, (index) => ((index + 1) * 100).toString());
   final List<String> systempressure =
@@ -103,7 +104,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   String? selectedRoute;
   String? selectedUnit;
   String? selectedArea;
-  String selectedYesNo = 'Yes';
+  String selectedYesNo = 'YES';
   String? selectedProductFlow;
   String? selectedRejectFlow;
   String? selectedSandFilterPressure;
@@ -159,61 +160,50 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             },
             list: rejuctflow),
         ResponsiveSizedBox.height20,
-        Container(
-          color: Appcolors.kwhiteColor,
-          padding: EdgeInsets.all(ResponsiveUtils.wp(3)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ResponsiveSizedBox.height10,
-              TextStyles.medium(
-                  text: 'Sand Filter Pressure',
-                  weight: FontWeight.bold,
-                  color: Appcolors.kdarkbluecolor),
-              ResponsiveSizedBox.height5,
-              dropdownTexfield(
-                  hintText: 'Select Sand Filter Pressure',
-                  onChanged: (value) {
-                    setState(() {
-                      selectedSandFilterPressure = value;
-                      sandfilterPressureController.text = value!;
-                    });
-                  },
-                  list: sandcarbonfilterPressure),
-              ResponsiveSizedBox.height20,
-              TextStyles.medium(
-                  text: 'Carbon Filter Pressure',
-                  weight: FontWeight.bold,
-                  color: Appcolors.kdarkbluecolor),
-              ResponsiveSizedBox.height5,
-              dropdownTexfield(
-                  hintText: 'Select carbon Filter Pressure',
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCarbonFilterPressure = value;
-                      carbonfilterPressureController.text = value!;
-                    });
-                  },
-                  list: sandcarbonfilterPressure),
-              ResponsiveSizedBox.height20,
-              TextStyles.medium(
-                  text: 'System Pressure',
-                  weight: FontWeight.bold,
-                  color: Appcolors.kdarkbluecolor),
-              ResponsiveSizedBox.height5,
-              dropdownTexfield(
-                  hintText: 'Select System Pressure',
-                  onChanged: (value) {
-                    setState(() {
-                      selectedSystemPressure = value;
-                      systemPressureController.text = value!;
-                    });
-                  },
-                  list: systempressure),
-              ResponsiveSizedBox.height20,
-            ],
-          ),
-        ),
+        TextStyles.medium(
+            text: 'Sand Filter Pressure',
+            weight: FontWeight.bold,
+            color: Appcolors.kdarkbluecolor),
+        ResponsiveSizedBox.height5,
+        dropdownTexfield(
+            hintText: 'Select Sand Filter Pressure',
+            onChanged: (value) {
+              setState(() {
+                selectedSandFilterPressure = value;
+                sandfilterPressureController.text = value!;
+              });
+            },
+            list: sandcarbonfilterPressure),
+        ResponsiveSizedBox.height20,
+        TextStyles.medium(
+            text: 'Carbon Filter Pressure',
+            weight: FontWeight.bold,
+            color: Appcolors.kdarkbluecolor),
+        ResponsiveSizedBox.height5,
+        dropdownTexfield(
+            hintText: 'Select carbon Filter Pressure',
+            onChanged: (value) {
+              setState(() {
+                selectedCarbonFilterPressure = value;
+                carbonfilterPressureController.text = value!;
+              });
+            },
+            list: sandcarbonfilterPressure),
+        ResponsiveSizedBox.height20,
+        TextStyles.medium(
+            text: 'System Pressure',
+            weight: FontWeight.bold,
+            color: Appcolors.kdarkbluecolor),
+        ResponsiveSizedBox.height5,
+        dropdownTexfield(
+            hintText: 'Select System Pressure',
+            onChanged: (value) {
+              setState(() {
+                selectedSystemPressure = value;
+                systemPressureController.text = value!;
+              });
+            },
+            list: systempressure),
         ResponsiveSizedBox.height20,
         TextStyles.medium(
             text: 'TDS',
@@ -288,10 +278,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextStyles.medium(
-                          text: 'Keb Meter Image',
+                          text: 'KEB Meter',
                           weight: FontWeight.bold,
                           color: Appcolors.kdarkbluecolor),
                       ResponsiveSizedBox.height10,
@@ -303,10 +293,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                     ],
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextStyles.medium(
-                          text: 'Flow Range Image',
+                          text: 'Flow Range',
                           weight: FontWeight.bold,
                           color: Appcolors.kdarkbluecolor),
                       ResponsiveSizedBox.height10,
@@ -324,10 +314,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextStyles.medium(
-                          text: 'Filter Chemical Image',
+                          text: 'Filter Chemical',
                           weight: FontWeight.bold,
                           color: Appcolors.kdarkbluecolor),
                       ResponsiveSizedBox.height10,
@@ -339,10 +329,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                     ],
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextStyles.medium(
-                          text: 'Coin Reading Image',
+                          text: 'Coin Reading',
                           weight: FontWeight.bold,
                           color: Appcolors.kdarkbluecolor),
                       ResponsiveSizedBox.height10,
@@ -365,55 +355,61 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 thickness: .5,
                 color: Appcolors.kprimarycolor,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextStyles.medium(
-                          text: 'Front Image',
-                          weight: FontWeight.bold,
-                          color: Appcolors.kdarkbluecolor),
-                      ResponsiveSizedBox.height10,
-                      // Add your No-specific widgets here
-                      ReusableImageContainer(
-                          source: 'Plant Front Image',
-                          height: ResponsiveUtils.hp(12),
-                          width: ResponsiveUtils.wp(25))
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextStyles.medium(
-                          text: 'Back Image',
-                          weight: FontWeight.bold,
-                          color: Appcolors.kdarkbluecolor),
-                      ResponsiveSizedBox.height10,
-                      // Add your No-specific widgets here
-                      ReusableImageContainer(
-                          source: 'Plant Back Image',
-                          height: ResponsiveUtils.hp(12),
-                          width: ResponsiveUtils.wp(25))
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextStyles.medium(
-                          text: 'Inside Image',
-                          weight: FontWeight.bold,
-                          color: Appcolors.kdarkbluecolor),
-                      ResponsiveSizedBox.height10,
-                      // Add your No-specific widgets here
-                      ReusableImageContainer(
-                          source: 'Plant Inside Image',
-                          height: ResponsiveUtils.hp(12),
-                          width: ResponsiveUtils.wp(25))
-                    ],
-                  ),
-                ],
+              Container(
+                padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveUtils.wp(2),
+                    vertical: ResponsiveUtils.wp(4)),
+                color: Appcolors.kgreyColor.withOpacity(.1),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TextStyles.medium(
+                            text: 'Front',
+                            weight: FontWeight.bold,
+                            color: Appcolors.kdarkbluecolor),
+                        ResponsiveSizedBox.height10,
+                        // Add your No-specific widgets here
+                        ReusableImageContainer(
+                            source: 'Plant Front Image',
+                            height: ResponsiveUtils.hp(12),
+                            width: ResponsiveUtils.wp(25))
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TextStyles.medium(
+                            text: 'Back',
+                            weight: FontWeight.bold,
+                            color: Appcolors.kdarkbluecolor),
+                        ResponsiveSizedBox.height10,
+                        // Add your No-specific widgets here
+                        ReusableImageContainer(
+                            source: 'Plant Back Image',
+                            height: ResponsiveUtils.hp(12),
+                            width: ResponsiveUtils.wp(25))
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TextStyles.medium(
+                            text: 'Inside',
+                            weight: FontWeight.bold,
+                            color: Appcolors.kdarkbluecolor),
+                        ResponsiveSizedBox.height10,
+                        // Add your No-specific widgets here
+                        ReusableImageContainer(
+                            source: 'Plant Inside Image',
+                            height: ResponsiveUtils.hp(12),
+                            width: ResponsiveUtils.wp(25))
+                      ],
+                    ),
+                  ],
+                ),
               ),
               ResponsiveSizedBox.height20,
               TextStyles.body(
@@ -1420,7 +1416,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                         list: yesNoOptions,
                         isYesNo: true),
                     ResponsiveSizedBox.height30,
-                    selectedYesNo == 'Yes'
+                    selectedYesNo == 'YES'
                         ? buildYesContent()
                         : buildNoContent(),
                   ],
