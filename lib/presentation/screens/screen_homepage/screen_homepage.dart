@@ -1,7 +1,10 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
+import 'package:aqua_green/presentation/blocs/fetch_profile/fetch_profile_bloc.dart';
 import 'package:aqua_green/presentation/widgets/custom_drawer.dart';
+import 'package:aqua_green/presentation/widgets/shared_preference.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -15,6 +18,7 @@ class ScreenHomepage extends StatefulWidget {
 class _ScreenHomepageState extends State<ScreenHomepage> {
   GoogleMapController? mapController;
   Position? currentPosition;
+  String username = "Guest";
 
   // Initial camera position (will be updated with current location)
   static const CameraPosition initialPosition = CameraPosition(
@@ -25,8 +29,11 @@ class _ScreenHomepageState extends State<ScreenHomepage> {
   @override
   void initState() {
     super.initState();
+    
     _getCurrentLocation();
+    
   }
+
 
   // Function to get location permission and current position
   Future<void> _getCurrentLocation() async {
@@ -84,10 +91,24 @@ class _ScreenHomepageState extends State<ScreenHomepage> {
             },
           );
         }),
-        title: TextStyles.body(
-            weight: FontWeight.bold,
-            text: 'Hii Crisant',
-            color: Appcolors.kprimarycolor),
+        title: BlocBuilder<FetchProfileBloc, FetchProfileState>(
+          builder: (context, state) {
+            if (state is FetchProfileLoadingState) {
+              return TextStyles.body(
+                  weight: FontWeight.bold,
+                  text: "Hii ",
+                  color: Appcolors.kprimarycolor);
+            }
+            if (state is FetchProfileSuccessState) {
+              return TextStyles.body(
+                  weight: FontWeight.bold,
+                  text: "Hii ${state.user.userFullName}",
+                  color: Appcolors.kprimarycolor);
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
+        ),
         // actions: [
         //   // Add refresh button to get current location again
         //   IconButton(

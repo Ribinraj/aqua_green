@@ -11,4 +11,6 @@ class Endpoints {
   static const updateUnits = 'units/updatemap';
   static const addmeasure = 'measurements/new';
   static const fetchreport = 'measurements/list';
+  static const fetchprofile = 'login/profile';
+  static const updateprofile = 'login/updateprofile';
 }

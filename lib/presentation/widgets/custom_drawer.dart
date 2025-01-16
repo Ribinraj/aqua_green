@@ -43,6 +43,16 @@ class CustomDrawer extends StatelessWidget {
           },
         ),
         ListTile(
+          leading: const Icon(Icons.home_outlined),
+          title: TextStyles.body(
+            text: 'Update Unit',
+            weight: FontWeight.w600,
+          ),
+          onTap: () {
+            navigateToMainPage(context, 1);
+          },
+        ),
+        ListTile(
           leading: const Icon(Icons.track_changes),
           title: TextStyles.body(
             text: 'Measure',
@@ -75,32 +85,8 @@ class CustomDrawer extends StatelessWidget {
         const Divider(),
         Column(
           children: [
-            ListTile(
-              leading: const Icon(
-                Icons.logout,
-              ),
-              title: TextStyles.body(
-                text: 'Logout',
-                weight: FontWeight.w600,
-              ),
-              onTap: () async {
-                // // Define and call the clearAllData function directly
-                // SharedPreferences preferences =
-                //     await SharedPreferences.getInstance();
-                // await preferences
-                //     .clear(); // Clears everything in SharedPreferences
-
-                // // Navigate to the Sign-In screen and remove all previous routes
-                // Navigator.of(context).pushAndRemoveUntil(
-                //   MaterialPageRoute(
-                //       builder: (context) =>
-                //           const AdvancedSplashScreen()),
-                //   (route) => false,
-                // );
-              },
-            ),
             SizedBox(
-              height: ResponsiveUtils.hp(7),
+              height: ResponsiveUtils.hp(12),
             ),
             TextStyles.caption(text: 'Designed & Developed by'),
             Row(

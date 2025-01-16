@@ -75,8 +75,8 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
       List.generate(15, (index) => (index + 1).toString());
 
   final List<String> yesNoOptions = [
-    'Yes',
-    'No',
+    'YES',
+    'NO',
   ];
   final TextEditingController routeController = TextEditingController();
   final TextEditingController areaController = TextEditingController();
@@ -122,6 +122,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
     context.read<FetchRouteBloc>().add(FetchRouteInitialEvent());
     context.read<FetchAreaBloc>().add(FetchAreaInitialEvent());
     context.read<FetchUnitBloc>().add(FetchUnitInitialEvent());
+    context.read<ImagePickerBloc>().add(ClearAllImagesEvent());
   }
 
   Widget buildYesContent() {
@@ -438,7 +439,38 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             if (state is AddMeasurmentSuccessState) {
               setState(() {
                 isloading = false;
+                // Reset selected values
+                selectedRoute = null;
+                selectedArea = null;
+                selectedUnit = null;
+                selectedAreaModel = null;
+                selectedUnitModel = null;
+                selectedProductFlow = null;
+                selectedRejectFlow = null;
+                selectedSandFilterPressure = null;
+                selectedCarbonFilterPressure = null;
+                selectedSystemPressure = null;
+
+                // Clear all controllers
+                unitController.clear();
+                areaController.clear();
+                routeController.clear();
+                productFlowController.clear();
+                rejectflowController.clear();
+                sandfilterPressureController.clear();
+                carbonfilterPressureController.clear();
+                systemPressureController.clear();
+                tdsController.clear();
+                waterlittersReadingController.clear();
+                coin_roWateterReadingController.clear();
+                kebmeterReadingController.clear();
               });
+
+              // Clear all images
+              context.read<ImagePickerBloc>().add(ClearAllImagesEvent());
+
+              // Reset form
+              _formKey.currentState?.reset();
               CustomSnackBar.show(
                   context: context,
                   title: 'Success',
@@ -609,6 +641,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                                       latt: currentlocation.latitude.toString(),
                                       long:
                                           currentlocation.longitude.toString(),
+                                      powerSupply: yesNoController.text,
                                       productFlow: productFlowController.text,
                                       rejectFlow: rejectflowController.text,
                                       sandFilterPressure:
@@ -741,7 +774,24 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             if (state is AddMeasurmentSuccessState) {
               setState(() {
                 isloading = false;
+                // Reset selected values
+                selectedRoute = null;
+                selectedArea = null;
+                selectedUnit = null;
+                selectedAreaModel = null;
+                selectedUnitModel = null;
+
+                // Clear all controllers
+                unitController.clear();
+                areaController.clear();
+                routeController.clear();
               });
+
+              // Clear all images
+              context.read<ImagePickerBloc>().add(ClearAllImagesEvent());
+
+              // Reset form
+              _formKey.currentState?.reset();
               CustomSnackBar.show(
                   context: context,
                   title: 'Success',
@@ -852,6 +902,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                                 routeId: routeController.text,
                                 latt: currentlocation.latitude.toString(),
                                 long: currentlocation.longitude.toString(),
+                                powerSupply: yesNoController.text,
                                 pictures: pictures)));
                   } catch (e) {
                     setState(() {

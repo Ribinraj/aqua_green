@@ -8,7 +8,7 @@ sealed class TogglePasswordState {
 }
 
 final class TogglePasswordInitial extends TogglePasswordState {
-  const TogglePasswordInitial():super(isPasswordVisible:true);
+  const TogglePasswordInitial():super(isPasswordVisible:false);
 }
 final class TogglePasswordVisible extends TogglePasswordState {
   const TogglePasswordVisible():super(isPasswordVisible:true);

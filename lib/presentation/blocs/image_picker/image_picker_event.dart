@@ -33,3 +33,4 @@ class RemoveImageEvent extends ImagePickerEvent {
   });
 }
 
+class ClearAllImagesEvent extends ImagePickerEvent {}

@@ -14,6 +14,7 @@ import 'package:aqua_green/presentation/blocs/update_unit/update_units_bloc.dart
 import 'package:aqua_green/presentation/screens/screen_measurepage/widgets/location_class.dart';
 
 import 'package:aqua_green/presentation/screens/screen_updateunits/widgets/disabledropdownbutton.dart';
+import 'package:aqua_green/presentation/widgets/custom_drawer.dart';
 import 'package:aqua_green/presentation/widgets/custom_snackbar.dart';
 import 'package:aqua_green/presentation/widgets/custom_submitbutton.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -68,6 +69,7 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
             text: 'Update Units',
             color: Appcolors.kprimarycolor),
       ),
+      drawer: const CustomDrawer(),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(ResponsiveUtils.wp(4)),
         child: Column(
@@ -376,18 +378,31 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
             BlocConsumer<UpdateUnitsBloc, UpdateUnitsState>(
               listener: (context, state) {
                 if (state is UpdateUnitSuccessState) {
-                    setState(() {
-        isloading = false;
-      });
+                  setState(() {
+                    isloading = false;
+                    selectedRoute = null;
+                    selectedArea = null;
+                    selectedUnit = null;
+                    selectedAreaModel = null;
+                    selectedUnitModel = null;
+
+                    // Clear all controllers
+                    unitController.clear();
+                    areaController.clear();
+                    routeController.clear();
+                  });
+                  context.read<FetchRouteBloc>().add(FetchRouteInitialEvent());
+                  context.read<FetchAreaBloc>().add(FetchAreaInitialEvent());
+                  context.read<FetchUnitBloc>().add(FetchUnitInitialEvent());
                   CustomSnackBar.show(
                       context: context,
                       title: 'Success',
                       message: state.message,
                       contentType: ContentType.success);
                 } else if (state is UpdateUnitErrorState) {
-                    setState(() {
-        isloading = false;
-      });
+                  setState(() {
+                    isloading = false;
+                  });
                   CustomSnackBar.show(
                       context: context,
                       title: 'Error!!',
@@ -410,32 +425,32 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
                 }
                 return SubmitButton(
                     ontap: () async {
-                   
                       if (unitController.text.isNotEmpty) {
+                        setState(() {
+                          isloading = true;
+                        });
+                        try {
+                          Position currentlocation =
+                              await LocationService().getCurrentLocation();
+                          context.read<UpdateUnitsBloc>().add(
+                              UpdateUnitButtonclickEvent(
+                                  unitId: unitController.text,
+                                  lattitude:
+                                      currentlocation.latitude.toString(),
+                                  longitude:
+                                      currentlocation.longitude.toString()));
+                        } catch (e) {
                           setState(() {
-            isloading = true;
-          });
-          try {
-                Position currentlocation =
-                          await LocationService().getCurrentLocation();
-                        context.read<UpdateUnitsBloc>().add(
-                            UpdateUnitButtonclickEvent(
-                                unitId: unitController.text,
-                                lattitude: currentlocation.latitude.toString(),
-                                longitude:
-                                    currentlocation.longitude.toString()));
-          } catch (e) {
-            setState(() {
-              isloading = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error processing images: ${e.toString()}'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-                       
+                            isloading = false;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Error processing images: ${e.toString()}'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       } else {
                         CustomSnackBar.show(
                             context: context,

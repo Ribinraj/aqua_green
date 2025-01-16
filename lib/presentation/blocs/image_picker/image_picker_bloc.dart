@@ -25,6 +25,7 @@ class ImagePickerBloc extends Bloc<ImagePickerEvent, Map<String, ImagePickerStat
   ImagePickerBloc() : super({}) {
     on<ImagePickedEvent>(_onAddImage);
     on<RemoveImageEvent>(_onRemoveImage);
+    on<ClearAllImagesEvent>(_onClearAllImages);
         
   }
 
@@ -65,5 +66,19 @@ class ImagePickerBloc extends Bloc<ImagePickerEvent, Map<String, ImagePickerStat
       }
     }
   }
-  
+    FutureOr<void> _onClearAllImages(ClearAllImagesEvent event, Emitter<Map<String, ImagePickerState>> emit) {
+    // Create a new map with empty states for all image types
+    final clearedState = {
+      'Meter Image': ImagePickerSuccessState(images: const [], isSingleImage: true),
+      'Flow Range Image': ImagePickerSuccessState(images: const [], isSingleImage: true),
+      'Filter Chemical Image': ImagePickerSuccessState(images: const [], isSingleImage: true),
+      'Coin Reading Image': ImagePickerSuccessState(images: const [], isSingleImage: true),
+      'Plant Front Image': ImagePickerSuccessState(images: const [], isSingleImage: true),
+      'Plant Back Image': ImagePickerSuccessState(images: const [], isSingleImage: true),
+      'Plant Inside Image': ImagePickerSuccessState(images: const [], isSingleImage: true),
+      'Additional Images': ImagePickerSuccessState(images: const [], isSingleImage: false),
+    };
+    
+    emit(clearedState);
+  }
 }

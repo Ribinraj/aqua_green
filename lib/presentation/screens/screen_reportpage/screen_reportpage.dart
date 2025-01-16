@@ -319,25 +319,23 @@ class _ScreenReportpageState extends State<ScreenReportpage> {
                                           color: Appcolors.kblackColor,
                                           weight: FontWeight.bold),
                                       const Spacer(),
-                                      SizedBox(
-                                          width: ResponsiveUtils.wp(22),
-                                          child: TextStyles.caption(
-                                              text: 'Electricity  :',
-                                              color: Appcolors.kblackColor,
-                                              weight: FontWeight.bold)),
-
+                                      TextStyles.caption(
+                                          text: 'Status :',
+                                          color: Appcolors.kblackColor,
+                                          weight: FontWeight.bold),
                                       ResponsiveSizedBox.width10,
+
                                       Container(
                                         decoration: BoxDecoration(
-                                            color: Appcolors.kgreenColor
-                                                .withOpacity(.6)),
+                                            color:report.status=='APPROVED' ? Appcolors.kgreenColor
+                                                .withOpacity(.6): Appcolors.kredColor) ,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
-                                            horizontal: ResponsiveUtils.wp(3),
+                                            horizontal: ResponsiveUtils.wp(2),
                                             vertical: ResponsiveUtils.wp(.8),
                                           ),
                                           child: TextStyles.caption(
-                                            text: 'Yes',
+                                            text: report.status,
                                             color: Appcolors.kwhiteColor,
                                             weight: FontWeight.bold,
                                           ),

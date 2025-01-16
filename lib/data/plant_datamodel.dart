@@ -59,7 +59,7 @@
 //     routeId: json['routeId'] ?? '',
 //     latt: json['latt'] ?? '',
 //     long: json['long'] ?? '',
-//     productFlow: json['productFlow']??'', 
+//     productFlow: json['productFlow']??'',
 //     rejectFlow: json['rejectFlow']??'',
 //     sandFilterPressure: json['sandFilterPressure']??'',
 //     carbonFilterPressure: json['carbonFilterPressure']??'',
@@ -106,46 +106,50 @@
 // }
 //////////////
 class WaterPlantDataModel {
-    String unitId;
-    String areaId;
-    String routeId;
-    String latt;
-    String long;
-    String? productFlow;
-    String? rejectFlow;
-    String? sandFilterPressure;
-    String? carbonFilterPressure;
-    String? systemPressure;
-    String? tds;
-    String? waterLtrsReading;
-    String? coinMeterReading;
-    String? kebMeterReading;
-    List<Picture> pictures;
+  String unitId;
+  String areaId;
+  String routeId;
+  String latt;
+  String long;
+  String powerSupply;
+  String? productFlow;
+  String? rejectFlow;
+  String? sandFilterPressure;
+  String? carbonFilterPressure;
+  String? systemPressure;
+  String? tds;
+  String? waterLtrsReading;
+  String? coinMeterReading;
+  String? kebMeterReading;
+  List<Picture> pictures;
 
-    WaterPlantDataModel({
-        required this.unitId,
-        required this.areaId,
-        required this.routeId,
-        required this.latt,
-        required this.long,
-         this.productFlow,
-         this.rejectFlow,
-         this.sandFilterPressure,
-         this.carbonFilterPressure,
-         this.systemPressure,
-         this.tds,
-         this.waterLtrsReading,
-         this.coinMeterReading,
-         this.kebMeterReading,
-        required this.pictures,
-    });
+  WaterPlantDataModel({
+    required this.unitId,
+    required this.areaId,
+    required this.routeId,
+    required this.latt,
+    required this.long,
+    required this.powerSupply,
+    this.productFlow,
+    this.rejectFlow,
+    this.sandFilterPressure,
+    this.carbonFilterPressure,
+    this.systemPressure,
+    this.tds,
+    this.waterLtrsReading,
+    this.coinMeterReading,
+    this.kebMeterReading,
+    required this.pictures,
+  });
 
-    factory WaterPlantDataModel.fromJson(Map<String, dynamic> json) => WaterPlantDataModel(
-        unitId: json["unitId"]??'',
-        areaId: json["areaId"]??'',
-        routeId: json["routeId"]??'',
-        latt: json["latt"]??'',
-        long: json["long"]??'',
+  factory WaterPlantDataModel.fromJson(Map<String, dynamic> json) =>
+      WaterPlantDataModel(
+        unitId: json["unitId"] ?? '',
+        areaId: json["areaId"] ?? '',
+        routeId: json["routeId"] ?? '',
+        latt: json["latt"] ?? '',
+        long: json["long"] ?? '',
+        powerSupply: json["powerSupply"]??'',
         productFlow: json["productFlow"],
         rejectFlow: json["rejectFlow"],
         sandFilterPressure: json["sandFilterPressure"],
@@ -155,15 +159,17 @@ class WaterPlantDataModel {
         waterLtrsReading: json["waterLtrsReading"],
         coinMeterReading: json["coinMeterReading"],
         kebMeterReading: json["kebMeterReading"],
-        pictures: List<Picture>.from(json["pictures"].map((x) => Picture.fromJson(x))),
-    );
+        pictures: List<Picture>.from(
+            json["pictures"].map((x) => Picture.fromJson(x))),
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "unitId": unitId,
         "areaId": areaId,
         "routeId": routeId,
         "latt": latt,
         "long": long,
+        "powerSupply":powerSupply,
         "productFlow": productFlow,
         "rejectFlow": rejectFlow,
         "sandFilterPressure": sandFilterPressure,
@@ -174,29 +180,29 @@ class WaterPlantDataModel {
         "coinMeterReading": coinMeterReading,
         "kebMeterReading": kebMeterReading,
         "pictures": List<dynamic>.from(pictures.map((x) => x.toJson())),
-    };
+      };
 }
 
 class Picture {
-    String imageName;
-    String pictureType;
-    String image;
+  String imageName;
+  String pictureType;
+  String image;
 
-    Picture({
-        required this.imageName,
-        required this.pictureType,
-        required this.image,
-    });
+  Picture({
+    required this.imageName,
+    required this.pictureType,
+    required this.image,
+  });
 
-    factory Picture.fromJson(Map<String, dynamic> json) => Picture(
+  factory Picture.fromJson(Map<String, dynamic> json) => Picture(
         imageName: json["imageName"],
         pictureType: json["pictureType"],
         image: json["image"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "imageName": imageName,
         "pictureType": pictureType,
         "image": image,
-    };
+      };
 }
