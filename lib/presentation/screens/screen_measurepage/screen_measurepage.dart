@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
@@ -654,6 +656,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                                       kebMeterReading:
                                           kebmeterReadingController.text,
                                       pictures: pictures)));
+                      log(yesNoController.text);
                     } catch (e) {
                       setState(() {
                         isloading = false;
@@ -694,10 +697,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextStyles.medium(
-                          text: 'Meter Image',
+                          text: 'KEB Meter',
                           weight: FontWeight.bold,
                           color: Appcolors.kdarkbluecolor),
                       ResponsiveSizedBox.height10,
@@ -709,10 +712,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                     ],
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextStyles.medium(
-                          text: 'Plant Front Image',
+                          text: 'Plant Front',
                           weight: FontWeight.bold,
                           color: Appcolors.kdarkbluecolor),
                       ResponsiveSizedBox.height10,
@@ -730,10 +733,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextStyles.medium(
-                          text: 'Plant Back Image',
+                          text: 'Plant Back',
                           weight: FontWeight.bold,
                           color: Appcolors.kdarkbluecolor),
                       ResponsiveSizedBox.height10,
@@ -745,10 +748,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                     ],
                   ),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextStyles.medium(
-                          text: 'Plant Inside Image',
+                          text: 'Plant Inside',
                           weight: FontWeight.bold,
                           color: Appcolors.kdarkbluecolor),
                       ResponsiveSizedBox.height10,
@@ -776,11 +779,13 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 selectedUnit = null;
                 selectedAreaModel = null;
                 selectedUnitModel = null;
+                selectedYesNo = 'YES';
 
                 // Clear all controllers
                 unitController.clear();
                 areaController.clear();
                 routeController.clear();
+                yesNoController.text = 'YES';
               });
 
               // Clear all images
@@ -900,6 +905,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                                 long: currentlocation.longitude.toString(),
                                 powerSupply: yesNoController.text,
                                 pictures: pictures)));
+                    log(yesNoController.text);
                   } catch (e) {
                     setState(() {
                       isloading = false;
@@ -1514,7 +1520,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
               ? 'Distance from current location: ${_distance!.toStringAsFixed(2)} km'
               : 'Calculating distance...',
           weight: FontWeight.bold,
-          color: Appcolors.kgreenColor,
+          color: Appcolors.kblackColor,
         ),
         Spacer(),
         if (_distance != null)
