@@ -7,6 +7,7 @@ import 'package:aqua_green/presentation/screens/screen_measurepage/screen_measur
 import 'package:aqua_green/presentation/screens/screen_profilepage/screen_profilepage.dart';
 import 'package:aqua_green/presentation/screens/screen_reportpage/screen_reportpage.dart';
 import 'package:aqua_green/presentation/screens/screen_updateunits/update_units.dart';
+import 'package:aqua_green/presentation/widgets/gps_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,9 +38,11 @@ class _ScreenMainPageState extends State<ScreenMainPage> {
     return BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
       builder: (context, state) {
         return ConnectivityAwareWidget(
-          child: Scaffold(
-            body: _pages[state.currentPageIndex],
-            bottomNavigationBar: const BottomNavigationWidget(),
+          child: GpsCheckScreen(
+            child: Scaffold(
+              body: _pages[state.currentPageIndex],
+              bottomNavigationBar: const BottomNavigationWidget(),
+            ),
           ),
         );
       },

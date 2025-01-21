@@ -41,4 +41,13 @@ class LocationService {
       throw 'Error calculating distance: $e';
     }
   }
+  ////////////
+  static Future<bool> isGpsEnabled() async {
+    return await Geolocator.isLocationServiceEnabled();
+  }
+
+  static Future<LocationPermission> checkPermission() async {
+    return await Geolocator.checkPermission();
+  }
 }
+
