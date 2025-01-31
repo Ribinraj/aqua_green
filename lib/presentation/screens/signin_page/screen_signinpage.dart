@@ -1,7 +1,7 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
-import 'package:aqua_green/presentation/blocs/fetch_profile/fetch_profile_bloc.dart';
+
 import 'package:aqua_green/presentation/blocs/otp_bloc/otp_bloc_bloc.dart';
 
 import 'package:aqua_green/presentation/blocs/cubit/toggle_password_cubit.dart';

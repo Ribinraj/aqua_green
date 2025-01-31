@@ -94,8 +94,8 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   final TextEditingController systemPressureController =
       TextEditingController();
   final TextEditingController tdsController = TextEditingController();
-  final TextEditingController waterlittersReadingController =
-      TextEditingController();
+  // final TextEditingController waterlittersReadingController =
+  //     TextEditingController();
   // ignore: non_constant_identifier_names
   final TextEditingController coin_roWateterReadingController =
       TextEditingController();
@@ -222,22 +222,22 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             },
             controller: tdsController,
             hinttext: 'Enter TDS'),
-        ResponsiveSizedBox.height20,
-        TextStyles.medium(
-            text: 'Water Litters Reading',
-            weight: FontWeight.bold,
-            color: Appcolors.kdarkbluecolor),
-        ResponsiveSizedBox.height5,
-        CustomTextfieldaddmeasure(
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Water litters reading cannot be empty';
-              }
-              return null;
-            },
-            textInputType: TextInputType.number,
-            controller: waterlittersReadingController,
-            hinttext: 'Enter Water Litters Reading'),
+        // ResponsiveSizedBox.height20,
+        // TextStyles.medium(
+        //     text: 'Water Litters Reading',
+        //     weight: FontWeight.bold,
+        //     color: Appcolors.kdarkbluecolor),
+        // ResponsiveSizedBox.height5,
+        // CustomTextfieldaddmeasure(
+        //     validator: (value) {
+        //       if (value == null || value.isEmpty) {
+        //         return 'Water litters reading cannot be empty';
+        //       }
+        //       return null;
+        //     },
+        //     textInputType: TextInputType.number,
+        //     controller: waterlittersReadingController,
+        //     hinttext: 'Enter Water Litters Reading'),
         ResponsiveSizedBox.height20,
         TextStyles.medium(
             text: 'Coin RO Water Reading',
@@ -459,7 +459,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 carbonfilterPressureController.clear();
                 systemPressureController.clear();
                 tdsController.clear();
-                waterlittersReadingController.clear();
+                // waterlittersReadingController.clear();
                 coin_roWateterReadingController.clear();
                 kebmeterReadingController.clear();
               });
@@ -631,31 +631,28 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                       //////////////
                       context.read<AddMeasurmentBloc>().add(
                           AddMeasurmentButtonclickEvent(
-                              datas:
-                                  WaterPlantDataModel(
-                                      unitId: unitController.text,
-                                      areaId: areaController.text,
-                                      routeId: routeController.text,
-                                      latt: currentlocation.latitude.toString(),
-                                      long:
-                                          currentlocation.longitude.toString(),
-                                      powerSupply: yesNoController.text,
-                                      productFlow: productFlowController.text,
-                                      rejectFlow: rejectflowController.text,
-                                      sandFilterPressure:
-                                          sandfilterPressureController.text,
-                                      carbonFilterPressure:
-                                          carbonfilterPressureController.text,
-                                      systemPressure:
-                                          systemPressureController.text,
-                                      tds: tdsController.text,
-                                      waterLtrsReading:
-                                          waterlittersReadingController.text,
-                                      coinMeterReading:
-                                          coin_roWateterReadingController.text,
-                                      kebMeterReading:
-                                          kebmeterReadingController.text,
-                                      pictures: pictures)));
+                              datas: WaterPlantDataModel(
+                                  unitId: unitController.text,
+                                  areaId: areaController.text,
+                                  routeId: routeController.text,
+                                  latt: currentlocation.latitude.toString(),
+                                  long: currentlocation.longitude.toString(),
+                                  powerSupply: yesNoController.text,
+                                  productFlow: productFlowController.text,
+                                  rejectFlow: rejectflowController.text,
+                                  sandFilterPressure:
+                                      sandfilterPressureController.text,
+                                  carbonFilterPressure:
+                                      carbonfilterPressureController.text,
+                                  systemPressure: systemPressureController.text,
+                                  tds: tdsController.text,
+                                  // waterLtrsReading:
+                                  //     waterlittersReadingController.text,
+                                  coinMeterReading:
+                                      coin_roWateterReadingController.text,
+                                  kebMeterReading:
+                                      kebmeterReadingController.text,
+                                  pictures: pictures)));
                       log(yesNoController.text);
                     } catch (e) {
                       setState(() {
@@ -687,7 +684,24 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   // Widget to show when No is selected
   Widget buildNoContent() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        TextStyles.medium(
+            text: 'Coin RO Water Reading',
+            weight: FontWeight.bold,
+            color: Appcolors.kdarkbluecolor),
+        ResponsiveSizedBox.height5,
+        CustomTextfieldaddmeasure(
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Coin RO water reading cannot be empty';
+              }
+              return null;
+            },
+            textInputType: TextInputType.number,
+            controller: coin_roWateterReadingController,
+            hinttext: 'Enter coin RO Water Reading'),
+        ResponsiveSizedBox.height20,
         Container(
           color: Appcolors.kwhiteColor,
           padding: EdgeInsets.all(ResponsiveUtils.wp(6)),
@@ -785,6 +799,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 unitController.clear();
                 areaController.clear();
                 routeController.clear();
+                coin_roWateterReadingController.clear();
                 yesNoController.text = 'YES';
               });
 
@@ -901,6 +916,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                                 unitId: unitController.text,
                                 areaId: areaController.text,
                                 routeId: routeController.text,
+                                coinMeterReading: coin_roWateterReadingController.text,
                                 latt: currentlocation.latitude.toString(),
                                 long: currentlocation.longitude.toString(),
                                 powerSupply: yesNoController.text,

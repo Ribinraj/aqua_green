@@ -118,7 +118,7 @@ class WaterPlantDataModel {
   String? carbonFilterPressure;
   String? systemPressure;
   String? tds;
-  String? waterLtrsReading;
+  //String? waterLtrsReading;
   String? coinMeterReading;
   String? kebMeterReading;
   List<Picture> pictures;
@@ -136,7 +136,7 @@ class WaterPlantDataModel {
     this.carbonFilterPressure,
     this.systemPressure,
     this.tds,
-    this.waterLtrsReading,
+    //this.waterLtrsReading,
     this.coinMeterReading,
     this.kebMeterReading,
     required this.pictures,
@@ -156,7 +156,7 @@ class WaterPlantDataModel {
         carbonFilterPressure: json["carbonFilterPressure"],
         systemPressure: json["systemPressure"],
         tds: json["tds"],
-        waterLtrsReading: json["waterLtrsReading"],
+       // waterLtrsReading: json["waterLtrsReading"],
         coinMeterReading: json["coinMeterReading"],
         kebMeterReading: json["kebMeterReading"],
         pictures: List<Picture>.from(
@@ -176,7 +176,7 @@ class WaterPlantDataModel {
         "carbonFilterPressure": carbonFilterPressure,
         "systemPressure": systemPressure,
         "tds": tds,
-        "waterLtrsReading": waterLtrsReading,
+       // "waterLtrsReading": waterLtrsReading,
         "coinMeterReading": coinMeterReading,
         "kebMeterReading": kebMeterReading,
         "pictures": List<dynamic>.from(pictures.map((x) => x.toJson())),
