@@ -2,7 +2,7 @@ import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
 import 'package:aqua_green/presentation/blocs/bloc/update_profile_bloc.dart';
-import 'package:aqua_green/presentation/blocs/fetch_profile/fetch_profile_bloc.dart';
+
 import 'package:aqua_green/presentation/widgets/custom_logintextfield.dart';
 import 'package:aqua_green/presentation/widgets/custom_navigator.dart';
 import 'package:aqua_green/presentation/widgets/custom_snackbar.dart';

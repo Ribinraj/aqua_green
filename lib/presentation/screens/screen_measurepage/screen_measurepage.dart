@@ -28,7 +28,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:geolocator/geolocator.dart';
+//import 'package:geolocator/geolocator.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -128,6 +128,14 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
     context.read<ImagePickerBloc>().add(ClearAllImagesEvent());
   }
 
+  @override
+  void dispose() {
+    // Clean up temporary files when the page is disposed
+    ImageProcessor.cleanupTempFiles();
+    log("cleaned successfully");
+    super.dispose();
+  }
+
   Widget buildYesContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,22 +230,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             },
             controller: tdsController,
             hinttext: 'Enter TDS'),
-        // ResponsiveSizedBox.height20,
-        // TextStyles.medium(
-        //     text: 'Water Litters Reading',
-        //     weight: FontWeight.bold,
-        //     color: Appcolors.kdarkbluecolor),
-        // ResponsiveSizedBox.height5,
-        // CustomTextfieldaddmeasure(
-        //     validator: (value) {
-        //       if (value == null || value.isEmpty) {
-        //         return 'Water litters reading cannot be empty';
-        //       }
-        //       return null;
-        //     },
-        //     textInputType: TextInputType.number,
-        //     controller: waterlittersReadingController,
-        //     hinttext: 'Enter Water Litters Reading'),
+     
         ResponsiveSizedBox.height20,
         TextStyles.medium(
             text: 'Coin RO Water Reading',
@@ -506,128 +499,36 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                     if (!validateYesFields()) return;
                     if (!validateYesImages()) return;
                     // Set processing state before starting image processing
-                    setState(() {
-                      isloading = true;
-                    });
 
                     try {
-                      Position currentlocation =
-                          await LocationService().getCurrentLocation();
+                      setState(() {
+                        isloading = true;
+                      });
+                      // Position currentlocation =
+                      //     await LocationService().getCurrentLocation();
+                      final locationFuture =
+                          LocationService().getCurrentLocation();
                       final imagePickerState =
                           context.read<ImagePickerBloc>().state;
+                      final List<Picture> pictures = [];
 
-                      // Get all images from their respective states
-                      final meterImages = (imagePickerState['Meter Image']
-                              as ImagePickerSuccessState)
-                          .images;
-                      final flowrangeImages =
-                          (imagePickerState['Flow Range Image']
-                                  as ImagePickerSuccessState)
-                              .images;
-                      final filterChemicalImages =
-                          (imagePickerState['Filter Chemical Image']
-                                  as ImagePickerSuccessState)
-                              .images;
-                      final coinreadingImages =
-                          (imagePickerState['Coin Reading Image']
-                                  as ImagePickerSuccessState)
-                              .images;
-                      final plantFrontImages =
-                          (imagePickerState['Plant Front Image']
-                                  as ImagePickerSuccessState)
-                              .images;
-                      final plantBackImages =
-                          (imagePickerState['Plant Back Image']
-                                  as ImagePickerSuccessState)
-                              .images;
-                      final plantInsideImages =
-                          (imagePickerState['Plant Inside Image']
-                                  as ImagePickerSuccessState)
-                              .images;
-                      final additionalImages =
-                          (imagePickerState['Additional Images']
-                                  as ImagePickerSuccessState)
-                              .images;
-
-                      final processedMeterImage =
-                          await ImageProcessor.processImage(meterImages.first);
-                      final processedFilterChemicalImage =
-                          await ImageProcessor.processImage(
-                              filterChemicalImages.first);
-                      final processedCoinReadingImage =
-                          await ImageProcessor.processImage(
-                              coinreadingImages.first);
-                      final processedFlowRangeImage =
-                          await ImageProcessor.processImage(
-                              flowrangeImages.first);
-                      final processedPlantFrontImage =
-                          await ImageProcessor.processImage(
-                              plantFrontImages.first);
-                      final processedPlantBackImage =
-                          await ImageProcessor.processImage(
-                              plantBackImages.first);
-                      final processedPlantInsideImage =
-                          await ImageProcessor.processImage(
-                              plantInsideImages.first);
-
-                      // Process additional images
-                      final processedAdditionalImages =
-                          await ImageProcessor.processMultipleImages(
-                              additionalImages);
-                      ////////////////
-                      final List<Picture> pictures = [
-                        Picture(
-                          imageName: ImageProcessor.generateImageName('Meter'),
-                          pictureType: 'Meter',
-                          image: processedMeterImage,
-                        ),
-                        Picture(
-                          imageName:
-                              ImageProcessor.generateImageName('FlowRange'),
-                          pictureType: 'FlowRange',
-                          image: processedFlowRangeImage,
-                        ),
-                        Picture(
-                          imageName: ImageProcessor.generateImageName(
-                              'FilterChemical'),
-                          pictureType: 'FilterChemical',
-                          image: processedFilterChemicalImage,
-                        ),
-                        Picture(
-                          imageName:
-                              ImageProcessor.generateImageName('CoinReading'),
-                          pictureType: 'CoinReading',
-                          image: processedCoinReadingImage,
-                        ),
-                        Picture(
-                          imageName:
-                              ImageProcessor.generateImageName('PlantFront'),
-                          pictureType: 'PlantFront',
-                          image: processedPlantFrontImage,
-                        ),
-                        Picture(
-                          imageName:
-                              ImageProcessor.generateImageName('PlantBack'),
-                          pictureType: 'PlantBack',
-                          image: processedPlantBackImage,
-                        ),
-                        Picture(
-                          imageName:
-                              ImageProcessor.generateImageName('PlantInside'),
-                          pictureType: 'PlantInside',
-                          image: processedPlantInsideImage,
-                        ),
-                        // Handle additional images with index
-                        ...List.generate(
-                            processedAdditionalImages.length,
-                            (index) => Picture(
-                                  imageName: ImageProcessor.generateImageName(
-                                      'Additional_$index'),
-                                  pictureType: 'Additional',
-                                  image: processedAdditionalImages[index],
+                      // Convert processed images to Picture objects
+                      for (var entry in imagePickerState.entries) {
+                        if (entry.value is ImagePickerSuccessState) {
+                          final state = entry.value as ImagePickerSuccessState;
+                          pictures.addAll(
+                            state.processedImages.map((processed) => Picture(
+                                  imageName: processed.fileName,
+                                  pictureType: entry.key,
+                                  image: processed.base64Data,
                                 )),
-                      ];
-                      if (!mounted) return;
+                          );
+                        }
+                      }
+
+                      // Wait for location
+                      final currentLocation = await locationFuture;
+                 
                       //////////////
                       context.read<AddMeasurmentBloc>().add(
                           AddMeasurmentButtonclickEvent(
@@ -635,8 +536,8 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                                   unitId: unitController.text,
                                   areaId: areaController.text,
                                   routeId: routeController.text,
-                                  latt: currentlocation.latitude.toString(),
-                                  long: currentlocation.longitude.toString(),
+                                  latt: currentLocation.latitude.toString(),
+                                  long: currentLocation.longitude.toString(),
                                   powerSupply: yesNoController.text,
                                   productFlow: productFlowController.text,
                                   rejectFlow: rejectflowController.text,
@@ -842,73 +743,32 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 if (_formKey.currentState!.validate()) {
                   if (!validateCommonFields()) return;
                   if (!validateNOImages()) return;
-                  setState(() {
-                    isloading = true;
-                  });
+
                   try {
-                    Position currentlocation =
-                        await LocationService().getCurrentLocation();
+                    setState(() {
+                      isloading = true;
+                    });
+                    // Position currentlocation =
+                    //     await LocationService().getCurrentLocation();
+                    final locationFuture =
+                        LocationService().getCurrentLocation();
                     final imagePickerState =
                         context.read<ImagePickerBloc>().state;
-
-                    // Get all images from their respective states
-                    final meterImages = (imagePickerState['Meter Image']
-                            as ImagePickerSuccessState)
-                        .images;
-
-                    final plantFrontImages =
-                        (imagePickerState['Plant Front Image']
-                                as ImagePickerSuccessState)
-                            .images;
-                    final plantBackImages =
-                        (imagePickerState['Plant Back Image']
-                                as ImagePickerSuccessState)
-                            .images;
-                    final plantInsideImages =
-                        (imagePickerState['Plant Inside Image']
-                                as ImagePickerSuccessState)
-                            .images;
-
-                    final processedMeterImage =
-                        await ImageProcessor.processImage(meterImages.first);
-
-                    final processedPlantFrontImage =
-                        await ImageProcessor.processImage(
-                            plantFrontImages.first);
-                    final processedPlantBackImage =
-                        await ImageProcessor.processImage(
-                            plantBackImages.first);
-                    final processedPlantInsideImage =
-                        await ImageProcessor.processImage(
-                            plantInsideImages.first);
-
-                    ////////////////
-                    final List<Picture> pictures = [
-                      Picture(
-                        imageName: ImageProcessor.generateImageName('Meter'),
-                        pictureType: 'Meter',
-                        image: processedMeterImage,
-                      ),
-                      Picture(
-                        imageName:
-                            ImageProcessor.generateImageName('PlantFront'),
-                        pictureType: 'PlantFront',
-                        image: processedPlantFrontImage,
-                      ),
-                      Picture(
-                        imageName:
-                            ImageProcessor.generateImageName('PlantBack'),
-                        pictureType: 'PlantBack',
-                        image: processedPlantBackImage,
-                      ),
-                      Picture(
-                        imageName:
-                            ImageProcessor.generateImageName('PlantInside'),
-                        pictureType: 'PlantInside',
-                        image: processedPlantInsideImage,
-                      ),
-                    ];
-                    if (!mounted) return;
+                    final List<Picture> pictures = [];
+                    for (var entry in imagePickerState.entries) {
+                      if (entry.value is ImagePickerSuccessState) {
+                        final state = entry.value as ImagePickerSuccessState;
+                        pictures.addAll(
+                          state.processedImages.map((processed) => Picture(
+                                imageName: processed.fileName,
+                                pictureType: entry.key,
+                                image: processed.base64Data,
+                              )),
+                        );
+                      }
+                    }
+                    final currentLocation = await locationFuture;
+               
                     //////////////
                     context.read<AddMeasurmentBloc>().add(
                         AddMeasurmentButtonclickEvent(
@@ -916,9 +776,10 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                                 unitId: unitController.text,
                                 areaId: areaController.text,
                                 routeId: routeController.text,
-                                coinMeterReading: coin_roWateterReadingController.text,
-                                latt: currentlocation.latitude.toString(),
-                                long: currentlocation.longitude.toString(),
+                                coinMeterReading:
+                                    coin_roWateterReadingController.text,
+                                latt: currentLocation.latitude.toString(),
+                                long: currentLocation.longitude.toString(),
                                 powerSupply: yesNoController.text,
                                 pictures: pictures)));
                     log(yesNoController.text);

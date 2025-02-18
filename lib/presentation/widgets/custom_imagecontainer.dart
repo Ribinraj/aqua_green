@@ -114,6 +114,7 @@ import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
 import 'package:aqua_green/presentation/blocs/image_picker/image_picker_bloc.dart';
+import 'package:aqua_green/presentation/screens/screen_measurepage/widgets/image_compressor.dart';
 import 'package:aqua_green/presentation/widgets/custom_imagepicker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -140,24 +141,62 @@ class ReusableImageContainer extends StatefulWidget {
   State<ReusableImageContainer> createState() => _ReusableImageContainerState();
 }
 
+// class _ReusableImageContainerState extends State<ReusableImageContainer> {
+//   void _onContainerTap(BuildContext context) {
+//     widget.imagePicker.showCameraDialog(
+//       context,
+//       onImagePicked: (File? pickedImage) {
+//         if (pickedImage != null) {
+//           context.read<ImagePickerBloc>().add(
+//                 ImagePickedEvent(
+//                   image: pickedImage,
+//                   source: widget.source,
+//                   isSingleImage: widget.isSingleImage,
+//                 ),
+//               );
+//         }
+//       },
+//     );
+//   }
 class _ReusableImageContainerState extends State<ReusableImageContainer> {
-  void _onContainerTap(BuildContext context) {
-    widget.imagePicker.showCameraDialog(
+  Future<void> _onContainerTap(BuildContext context) async {
+    await widget.imagePicker.showCameraDialog(
       context,
-      onImagePicked: (File? pickedImage) {
+      onImagePicked: (File? pickedImage) async {
         if (pickedImage != null) {
-          context.read<ImagePickerBloc>().add(
-                ImagePickedEvent(
-                  image: pickedImage,
-                  source: widget.source,
-                  isSingleImage: widget.isSingleImage,
-                ),
-              );
+          try {
+            // Process image immediately after capture
+            final processedData = await _processImage(pickedImage);
+            
+            // Add both original and processed data to bloc
+            context.read<ImagePickerBloc>().add(
+           ImagePickedEvent(image: pickedImage, source:widget.source, processdData:processedData)
+            );
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error processing image: $e')),
+            );
+          }
         }
       },
     );
   }
 
+  Future<ProcessedImageData> _processImage(File imageFile) async {
+    // Compress image
+    final compressedFile = await ImageProcessor.compressImage(imageFile);
+    
+    // Convert to base64
+    final base64String = await ImageProcessor.convertToBase64(compressedFile);
+    
+    // Generate unique filename
+    final fileName = ImageProcessor.generateImageName(widget.source);
+
+    return ProcessedImageData(
+      base64Data: base64String,
+      fileName: fileName,
+    );
+  }
   Widget _buildContainerContent(BuildContext context, ImagePickerSuccessState? state) {
     if (state != null && state.images.isNotEmpty) {
       // Show the first image (or only image for single-image mode)

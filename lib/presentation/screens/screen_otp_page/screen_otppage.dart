@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
-import 'package:aqua_green/presentation/blocs/otp_bloc/otp_bloc_bloc.dart';
+
 import 'package:aqua_green/presentation/blocs/resend_otp/resend_otp_bloc.dart';
 import 'package:aqua_green/presentation/blocs/verify_otpbloc/verify_otp_bloc.dart';
 import 'package:aqua_green/presentation/screens/screen_reset_password/screen_reset_passwordpage.dart';
