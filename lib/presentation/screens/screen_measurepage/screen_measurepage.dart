@@ -230,7 +230,6 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             },
             controller: tdsController,
             hinttext: 'Enter TDS'),
-     
         ResponsiveSizedBox.height20,
         TextStyles.medium(
             text: 'Coin RO Water Reading',
@@ -428,6 +427,8 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
         BlocConsumer<AddMeasurmentBloc, AddMeasurmentState>(
           listener: (context, state) {
             if (state is AddMeasurmentSuccessState) {
+                 // Reset form
+              _formKey.currentState?.reset();
               setState(() {
                 isloading = false;
                 // Reset selected values
@@ -455,13 +456,16 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 // waterlittersReadingController.clear();
                 coin_roWateterReadingController.clear();
                 kebmeterReadingController.clear();
+                tdsController.text = '';
+                coin_roWateterReadingController.text = '';
+                kebmeterReadingController.text = '';
               });
 
               // Clear all images
               context.read<ImagePickerBloc>().add(ClearAllImagesEvent());
 
-              // Reset form
-              _formKey.currentState?.reset();
+           
+
               CustomSnackBar.show(
                   context: context,
                   title: 'Success',
@@ -528,7 +532,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
 
                       // Wait for location
                       final currentLocation = await locationFuture;
-                 
+
                       //////////////
                       context.read<AddMeasurmentBloc>().add(
                           AddMeasurmentButtonclickEvent(
@@ -686,6 +690,8 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
         BlocConsumer<AddMeasurmentBloc, AddMeasurmentState>(
           listener: (context, state) {
             if (state is AddMeasurmentSuccessState) {
+              // Reset form
+              _formKey.currentState?.reset();
               setState(() {
                 isloading = false;
                 // Reset selected values
@@ -702,13 +708,12 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                 routeController.clear();
                 coin_roWateterReadingController.clear();
                 yesNoController.text = 'YES';
+                coin_roWateterReadingController.text = '';
               });
 
               // Clear all images
               context.read<ImagePickerBloc>().add(ClearAllImagesEvent());
 
-              // Reset form
-              _formKey.currentState?.reset();
               CustomSnackBar.show(
                   context: context,
                   title: 'Success',
@@ -768,7 +773,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                       }
                     }
                     final currentLocation = await locationFuture;
-               
+
                     //////////////
                     context.read<AddMeasurmentBloc>().add(
                         AddMeasurmentButtonclickEvent(

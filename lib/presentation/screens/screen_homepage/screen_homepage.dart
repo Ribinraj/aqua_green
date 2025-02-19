@@ -1,6 +1,7 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/presentation/blocs/fetch_profile/fetch_profile_bloc.dart';
+import 'package:aqua_green/presentation/screens/signin_page/screen_signinpage.dart';
 import 'package:aqua_green/presentation/widgets/custom_drawer.dart';
 
 import 'package:flutter/material.dart';
@@ -29,11 +30,9 @@ class _ScreenHomepageState extends State<ScreenHomepage> {
   @override
   void initState() {
     super.initState();
-    
-    _getCurrentLocation();
-    
-  }
 
+    _getCurrentLocation();
+  }
 
   // Function to get location permission and current position
   Future<void> _getCurrentLocation() async {
@@ -91,31 +90,67 @@ class _ScreenHomepageState extends State<ScreenHomepage> {
             },
           );
         }),
-        title: BlocBuilder<FetchProfileBloc, FetchProfileState>(
-          builder: (context, state) {
-            if (state is FetchProfileLoadingState) {
-              return TextStyles.body(
-                  weight: FontWeight.bold,
-                  text: "Hii ",
-                  color: Appcolors.kprimarycolor);
-            }
-            if (state is FetchProfileSuccessState) {
-              return TextStyles.body(
-                  weight: FontWeight.bold,
-                  text: "Hii ${state.user.userFullName}",
-                  color: Appcolors.kprimarycolor);
-            } else {
-              return const SizedBox.shrink();
+        title: BlocListener<FetchProfileBloc, FetchProfileState>(
+          listener: (context, state) {
+            if (state is FetchProfileErrorState) {
+              if (state.message == "Expired token") {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ScreenSigninPage()),
+                  (Route<dynamic> route) => false, // Remove all previous routes
+                );
+              }
             }
           },
+          child: BlocBuilder<FetchProfileBloc, FetchProfileState>(
+            builder: (context, state) {
+              if (state is FetchProfileLoadingState) {
+                return TextStyles.body(
+                  weight: FontWeight.bold,
+                  text: "Hii ",
+                  color: Appcolors.kprimarycolor,
+                );
+              }
+              if (state is FetchProfileSuccessState) {
+                return TextStyles.body(
+                  weight: FontWeight.bold,
+                  text: "Hii ${state.user.userFullName}",
+                  color: Appcolors.kprimarycolor,
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
         ),
-        // actions: [
-        //   // Add refresh button to get current location again
-        //   IconButton(
-        //     icon: const Icon(Icons.my_location),
-        //     onPressed: _getCurrentLocation,
-        //   ),
-        // ],
+
+        // title: BlocBuilder<FetchProfileBloc, FetchProfileState>(
+        //   builder: (context, state) {
+        //     if (state is FetchProfileLoadingState) {
+        //       return TextStyles.body(
+        //           weight: FontWeight.bold,
+        //           text: "Hii ",
+        //           color: Appcolors.kprimarycolor);
+        //     }
+        //     if (state is FetchProfileSuccessState) {
+        //       return TextStyles.body(
+        //           weight: FontWeight.bold,
+        //           text: "Hii ${state.user.userFullName}",
+        //           color: Appcolors.kprimarycolor);
+        //     }
+
+        //      else {
+        //       return const SizedBox.shrink();
+        //     }
+        //   },
+        // ),
+        actions: [
+          // Add refresh button to get current location again
+          IconButton(
+            icon: const Icon(Icons.my_location),
+            onPressed: _getCurrentLocation,
+          ),
+        ],
       ),
       drawer: const CustomDrawer(),
       body: GoogleMap(

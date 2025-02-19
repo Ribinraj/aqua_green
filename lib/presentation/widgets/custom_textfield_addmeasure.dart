@@ -1,7 +1,7 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:flutter/material.dart';
 
-class CustomTextfieldaddmeasure extends StatelessWidget {
+class CustomTextfieldaddmeasure extends StatefulWidget {
   const CustomTextfieldaddmeasure(
       {super.key,
       required this.controller,
@@ -21,15 +21,30 @@ class CustomTextfieldaddmeasure extends StatelessWidget {
   // final int? maxlines;
   final String hinttext;
   final bool? readonly;
+
+  @override
+  State<CustomTextfieldaddmeasure> createState() => _CustomTextfieldaddmeasureState();
+}
+
+class _CustomTextfieldaddmeasureState extends State<CustomTextfieldaddmeasure> {
+   @override
+  void initState() {
+    super.initState();
+    // Add listener to controller
+    widget.controller.addListener(() {
+      if (mounted) setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       cursorColor: Appcolors.kprimarycolor,
-      validator: validator,
-      controller: controller,
+      validator: widget.validator,
+      controller: widget.controller,
       // maxLines: maxlines,
-      keyboardType: textInputType,
-      readOnly: readonly ?? false,
+      keyboardType: widget.textInputType,
+      readOnly: widget.readonly ?? false,
       style: const TextStyle(
         fontSize: 13,
       ),
@@ -39,10 +54,10 @@ class CustomTextfieldaddmeasure extends StatelessWidget {
           // border: InputBorder.none,
           isDense: true,
           errorMaxLines: 3,
-          suffixIcon: suffixIcon,
+          suffixIcon: widget.suffixIcon,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-          hintText: hinttext,
+          hintText: widget.hinttext,
           hintStyle:
               const TextStyle(fontSize: 11, color: Appcolors.kdarkbluecolor),
           enabledBorder: const OutlineInputBorder(
@@ -56,5 +71,11 @@ class CustomTextfieldaddmeasure extends StatelessWidget {
           focusedErrorBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Appcolors.kredColor, width: .5))),
     );
+  }
+    @override
+  void dispose() {
+    // Remove listener when widget is disposed
+    widget.controller.removeListener(() {});
+    super.dispose();
   }
 }

@@ -43,6 +43,8 @@ class Loginrepo {
       if (!responseData["error"] && responseData["status"] == 200) {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         preferences.setString('USER_TOKEN', responseData["data"]["token"]);
+        preferences.setString('USER_NUMBER', mobileNumber);
+        preferences.setString('USER_PASSWORD', password);
 
         return ApiResponse(
           data: null,
@@ -249,7 +251,7 @@ class Loginrepo {
 
       if (!responseData["error"] && responseData["status"] == 200) {
         final jsonuser = responseData['data'];
-    
+
         final user = UserModel.fromJson(jsonuser);
 
         return ApiResponse(
