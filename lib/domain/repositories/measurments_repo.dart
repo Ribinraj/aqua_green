@@ -7,6 +7,8 @@ import 'package:aqua_green/data/plant_datamodel.dart';
 import 'package:aqua_green/data/reports.dart';
 import 'package:aqua_green/data/route_model.dart';
 import 'package:aqua_green/data/unit_model.dart';
+import 'package:aqua_green/domain/database/measurment_savedatabase.dart';
+
 import 'package:aqua_green/presentation/widgets/shared_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +29,8 @@ class ApiResponse<T> {
 
 class MeasurmentsRepo {
   final http.Client client;
-  MeasurmentsRepo({http.Client? client}) : client = client ?? http.Client();
+  final WaterPlantDatabaseHelper waterPlantDatabaseHelper;
+  MeasurmentsRepo({http.Client? client}) : client = client ?? http.Client(), waterPlantDatabaseHelper=WaterPlantDatabaseHelper.instance;
   //////////fetch routes ////////////////
   Future<ApiResponse<List<RouteModel>>> fetcchroutes() async {
     try {
@@ -169,7 +172,7 @@ class MeasurmentsRepo {
       required String latitude,
       required String longitude}) async {
     log(unitId);
-  
+
     try {
       final token = await getUserToken();
       var response = await client.post(
@@ -254,6 +257,7 @@ class MeasurmentsRepo {
       );
     }
   }
+
   Future<ApiResponse<List<ReportModel>>> fetchreport() async {
     try {
       final token = await getUserToken();
@@ -297,6 +301,7 @@ class MeasurmentsRepo {
       );
     }
   }
+
   void dispose() {
     client.close();
   }

@@ -37,12 +37,10 @@ class _ScreenMainPageState extends State<ScreenMainPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<BottomNavigationBloc, BottomNavigationState>(
       builder: (context, state) {
-        return ConnectivityAwareWidget(
-          child: GpsCheckScreen(
-            child: Scaffold(
-              body: _pages[state.currentPageIndex],
-              bottomNavigationBar: const BottomNavigationWidget(),
-            ),
+        return GpsCheckScreen(
+          child: Scaffold(
+            body: _pages[state.currentPageIndex],
+            bottomNavigationBar: const BottomNavigationWidget(),
           ),
         );
       },

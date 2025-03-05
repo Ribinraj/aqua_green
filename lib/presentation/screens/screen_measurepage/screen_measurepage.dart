@@ -226,6 +226,9 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
               if (value == null || value.isEmpty) {
                 return 'TDS cannot be empty';
               }
+                 if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
+              return 'Enter a valid numeric value';
+            }
               return null;
             },
             controller: tdsController,
@@ -241,6 +244,9 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
               if (value == null || value.isEmpty) {
                 return 'Coin RO water reading cannot be empty';
               }
+                 if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
+              return 'Enter a valid numeric value';
+            }
               return null;
             },
             textInputType: TextInputType.number,
@@ -253,15 +259,30 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
             color: Appcolors.kdarkbluecolor),
         ResponsiveSizedBox.height5,
         CustomTextfieldaddmeasure(
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'KEB meter reading cannot be empty';
-              }
-              return null;
-            },
-            textInputType: TextInputType.number,
-            controller: kebmeterReadingController,
-            hinttext: 'Enter keb meter Reading'),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'KEB meter reading cannot be empty';
+            }
+            if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
+              return 'Enter a valid numeric value';
+            }
+            return null;
+          },
+          textInputType: TextInputType.number,
+          controller: kebmeterReadingController,
+          hinttext: 'Enter KEB meter reading',
+        ),
+
+        // CustomTextfieldaddmeasure(
+        //     validator: (value) {
+        //       if (value == null || value.isEmpty) {
+        //         return 'KEB meter reading cannot be empty';
+        //       }
+        //       return null;
+        //     },
+        //     textInputType: TextInputType.number,
+        //     controller: kebmeterReadingController,
+        //     hinttext: 'Enter keb meter Reading'),
         ResponsiveSizedBox.height20,
         Container(
           color: Appcolors.kwhiteColor,
@@ -427,7 +448,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
         BlocConsumer<AddMeasurmentBloc, AddMeasurmentState>(
           listener: (context, state) {
             if (state is AddMeasurmentSuccessState) {
-                 // Reset form
+              // Reset form
               _formKey.currentState?.reset();
               setState(() {
                 isloading = false;
@@ -463,8 +484,6 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
 
               // Clear all images
               context.read<ImagePickerBloc>().add(ClearAllImagesEvent());
-
-           
 
               CustomSnackBar.show(
                   context: context,
@@ -601,6 +620,9 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
               if (value == null || value.isEmpty) {
                 return 'Coin RO water reading cannot be empty';
               }
+                 if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
+              return 'Enter a valid numeric value';
+            }
               return null;
             },
             textInputType: TextInputType.number,

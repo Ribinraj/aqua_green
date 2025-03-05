@@ -106,6 +106,7 @@
 // }
 //////////////
 class WaterPlantDataModel {
+  int? id;
   String unitId;
   String areaId;
   String routeId;
@@ -124,6 +125,7 @@ class WaterPlantDataModel {
   List<Picture> pictures;
 
   WaterPlantDataModel({
+    this.id,
     required this.unitId,
     required this.areaId,
     required this.routeId,
@@ -144,19 +146,20 @@ class WaterPlantDataModel {
 
   factory WaterPlantDataModel.fromJson(Map<String, dynamic> json) =>
       WaterPlantDataModel(
+        id: json["id"] ?? '',
         unitId: json["unitId"] ?? '',
         areaId: json["areaId"] ?? '',
         routeId: json["routeId"] ?? '',
         latt: json["latt"] ?? '',
         long: json["long"] ?? '',
-        powerSupply: json["powerSupply"]??'',
+        powerSupply: json["powerSupply"] ?? '',
         productFlow: json["productFlow"],
         rejectFlow: json["rejectFlow"],
         sandFilterPressure: json["sandFilterPressure"],
         carbonFilterPressure: json["carbonFilterPressure"],
         systemPressure: json["systemPressure"],
         tds: json["tds"],
-       // waterLtrsReading: json["waterLtrsReading"],
+        // waterLtrsReading: json["waterLtrsReading"],
         coinMeterReading: json["coinMeterReading"],
         kebMeterReading: json["kebMeterReading"],
         pictures: List<Picture>.from(
@@ -164,19 +167,20 @@ class WaterPlantDataModel {
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "unitId": unitId,
         "areaId": areaId,
         "routeId": routeId,
         "latt": latt,
         "long": long,
-        "powerSupply":powerSupply,
+        "powerSupply": powerSupply,
         "productFlow": productFlow,
         "rejectFlow": rejectFlow,
         "sandFilterPressure": sandFilterPressure,
         "carbonFilterPressure": carbonFilterPressure,
         "systemPressure": systemPressure,
         "tds": tds,
-       // "waterLtrsReading": waterLtrsReading,
+        // "waterLtrsReading": waterLtrsReading,
         "coinMeterReading": coinMeterReading,
         "kebMeterReading": kebMeterReading,
         "pictures": List<dynamic>.from(pictures.map((x) => x.toJson())),

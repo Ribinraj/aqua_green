@@ -439,11 +439,11 @@ class _ScreenReportpageState extends State<ScreenReportpage> {
                                                 context: context,
                                                 heading: 'TDS',
                                                 details: '${report.tds}'),
-                                            CustomLargeTextWidget(
-                                                context: context,
-                                                heading: 'Water Ltrs',
-                                                details:
-                                                    '${report.waterLtrsReading}'),
+                                            // CustomLargeTextWidget(
+                                            //     context: context,
+                                            //     heading: 'Water Ltrs',
+                                            //     details:
+                                            //         '${report.waterLtrsReading}'),
                                             CustomLargeTextWidget(
                                                 context: context,
                                                 heading: 'KEB meter',
