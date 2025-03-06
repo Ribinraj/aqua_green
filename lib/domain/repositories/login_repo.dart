@@ -39,8 +39,9 @@ class Loginrepo {
       );
 
       final responseData = jsonDecode(response.body);
-      // log(response.toString());
+  
       if (!responseData["error"] && responseData["status"] == 200) {
+        log("token${responseData["data"]["token"]}");
         SharedPreferences preferences = await SharedPreferences.getInstance();
         preferences.setString('USER_TOKEN', responseData["data"]["token"]);
         preferences.setString('USER_NUMBER', mobileNumber);

@@ -21,7 +21,7 @@ class AddMeasurmentBloc extends Bloc<AddMeasurmentEvent, AddMeasurmentState> {
     emit(AddMeasurmentLoadingState());
     final response = await repository.addmeasurments(datas: event.datas);
     if (!response.error && response.status == 200) {
-      emit(AddMeasurmentSuccessState());
+      emit(AddMeasurmentSuccessState(message: response.message));
     }
     else{
       emit(AddMeasurmentErrorState(message: response.message));

@@ -7,7 +7,11 @@ final class AddMeasurmentInitial extends AddMeasurmentState {}
 
 final class AddMeasurmentLoadingState extends AddMeasurmentState {}
 
-final class AddMeasurmentSuccessState extends AddMeasurmentState {}
+final class AddMeasurmentSuccessState extends AddMeasurmentState {
+  final String message;
+
+  AddMeasurmentSuccessState({required this.message});
+}
 
 final class AddMeasurmentErrorState extends AddMeasurmentState {
   final String message;

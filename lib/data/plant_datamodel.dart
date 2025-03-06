@@ -122,6 +122,7 @@ class WaterPlantDataModel {
   //String? waterLtrsReading;
   String? coinMeterReading;
   String? kebMeterReading;
+  String createdAt;
   List<Picture> pictures;
 
   WaterPlantDataModel({
@@ -141,8 +142,10 @@ class WaterPlantDataModel {
     //this.waterLtrsReading,
     this.coinMeterReading,
     this.kebMeterReading,
+   
     required this.pictures,
-  });
+    String? createdAt,
+  }) : createdAt = createdAt??DateTime.now().toString();
 
   factory WaterPlantDataModel.fromJson(Map<String, dynamic> json) =>
       WaterPlantDataModel(
@@ -162,6 +165,7 @@ class WaterPlantDataModel {
         // waterLtrsReading: json["waterLtrsReading"],
         coinMeterReading: json["coinMeterReading"],
         kebMeterReading: json["kebMeterReading"],
+        createdAt: json["createdAt"],
         pictures: List<Picture>.from(
             json["pictures"].map((x) => Picture.fromJson(x))),
       );
@@ -183,6 +187,7 @@ class WaterPlantDataModel {
         // "waterLtrsReading": waterLtrsReading,
         "coinMeterReading": coinMeterReading,
         "kebMeterReading": kebMeterReading,
+        "createdAt": createdAt,
         "pictures": List<dynamic>.from(pictures.map((x) => x.toJson())),
       };
 }

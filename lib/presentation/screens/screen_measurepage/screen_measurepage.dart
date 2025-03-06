@@ -739,7 +739,7 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
               CustomSnackBar.show(
                   context: context,
                   title: 'Success',
-                  message: 'Measurement recorded successfully',
+                  message: state.message,
                   contentType: ContentType.success);
             } else if (state is AddMeasurmentErrorState) {
               setState(() {
