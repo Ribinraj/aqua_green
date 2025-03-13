@@ -3,6 +3,7 @@ import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
 import 'package:aqua_green/data/plant_datamodel.dart';
 import 'package:aqua_green/data/reports.dart';
+import 'package:aqua_green/domain/database/measurment_savedatabase.dart';
 import 'package:aqua_green/domain/repositories/measurments_repo.dart';
 import 'package:aqua_green/presentation/blocs/fetch_report_offline/fetch_report_offline_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_reportbloc/fetch_report_bloc.dart';
@@ -290,7 +291,7 @@ class ScreenReportpage extends StatefulWidget {
 
 class _ScreenReportpageState extends State<ScreenReportpage>
     with SingleTickerProviderStateMixin {
-  int? expandedIndex; 
+  int? expandedIndex;
   late TabController _tabController;
   @override
   void initState() {
@@ -350,13 +351,13 @@ class _ScreenReportpageState extends State<ScreenReportpage>
       floatingActionButton: _tabController.index == 1
           ? FloatingActionButton(
               elevation: 0,
-              onPressed: () async{
-               await MeasurmentsRepo().syncPendingData();
-                  BlocProvider.of<FetchReportOfflineBloc>(context)
-        .add(FetchReportOfflineInitialEvent());
+              onPressed: () async {
+                await MeasurmentsRepo().syncPendingData();
+                BlocProvider.of<FetchReportOfflineBloc>(context)
+                    .add(FetchReportOfflineInitialEvent());
               },
               backgroundColor: Appcolors.kgreenColor.withOpacity(.4),
-              child: Icon(
+              child: const Icon(
                 Icons.sync,
                 color: Colors.blue,
               ),
@@ -444,7 +445,7 @@ class _ScreenReportpageState extends State<ScreenReportpage>
                                           .withOpacity(.1)),
                                   child: Text(
                                     'Area : ${report.areaName}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Appcolors.kblackColor,
                                         fontSize: 12),
@@ -466,7 +467,7 @@ class _ScreenReportpageState extends State<ScreenReportpage>
                                       vertical: ResponsiveUtils.wp(1.5)),
                                   child: Text(
                                     'Root : ${report.routeName}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Appcolors.kblackColor,
                                         fontSize: 12),
@@ -606,199 +607,238 @@ class _ScreenReportpageState extends State<ScreenReportpage>
   //////////////
   ///  /// Builds the expandable report list
   Widget _buildofflienReportList(List<WaterPlantDataModel> reports) {
-    return ListView.builder(
-      itemCount: reports.length,
-      itemBuilder: (context, index) {
-        final report = reports[index];
-        bool isExpanded = expandedIndex == index;
+    return reports.isEmpty
+        ? Center(
+            child: TextStyles.body(
+            text: 'No offline data available',
+            color: Appcolors.kblackColor,
+            weight: FontWeight.bold,
+          ))
+        : ListView.builder(
+            itemCount: reports.length,
+            itemBuilder: (context, index) {
+              final report = reports[index];
+              bool isExpanded = expandedIndex == index;
 
-        return Padding(
-          padding: EdgeInsets.only(
-              left: ResponsiveUtils.wp(4),
-              right: ResponsiveUtils.wp(4),
-              top: ResponsiveUtils.wp(4)),
-          child: InkWell(
-            onTap: () {
-              setState(() {
-                expandedIndex = isExpanded ? null : index;
-              });
-            },
-            child: Container(
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    // Existing content
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding:
-                                      EdgeInsets.all(ResponsiveUtils.wp(1.5)),
-                                  decoration: BoxDecoration(
-                                      color: Appcolors.kprimarycolor
-                                          .withOpacity(.1)),
-                                  child: Text(
-                                    'Area Id : ${report.areaId}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Appcolors.kblackColor,
-                                        fontSize: 12),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ),
-                              ),
-                              ResponsiveSizedBox.width50,
-                              ResponsiveSizedBox.width10,
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: Appcolors.kprimarycolor
-                                        .withOpacity(.1)),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: ResponsiveUtils.wp(3),
-                                      vertical: ResponsiveUtils.wp(1.5)),
-                                  child: Text(
-                                    'Root Id : ${report.routeId}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Appcolors.kblackColor,
-                                        fontSize: 12),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          ResponsiveSizedBox.height20,
-                          ResponsiveSizedBox.height5,
-                          Row(
-                            children: [
-                              TextStyles.caption(
-                                  text:
-                                      'Date  : ${DateFormat('dd-MM-yyyy').format(DateTime.parse(report.createdAt))}',
-                                  color: Appcolors.kblackColor,
-                                  weight: FontWeight.bold),
-                              const Spacer(),
-                              TextStyles.caption(
-                                  text: 'Status :',
-                                  color: Appcolors.kblackColor,
-                                  weight: FontWeight.bold),
-                              ResponsiveSizedBox.width10,
-                              Container(
-                                decoration:
-                                    BoxDecoration(color: Appcolors.kredColor),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: ResponsiveUtils.wp(2),
-                                    vertical: ResponsiveUtils.wp(.8),
-                                  ),
-                                  child: TextStyles.caption(
-                                    text: 'Pending',
-                                    color: Appcolors.kwhiteColor,
-                                    weight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          ResponsiveSizedBox.height10,
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            height: isExpanded ? ResponsiveUtils.hp(42) : 0,
-                            curve: Curves.easeInOut,
-                            child: SingleChildScrollView(
-                              padding:
-                                  EdgeInsets.only(top: ResponsiveUtils.wp(2)),
-                              physics: const NeverScrollableScrollPhysics(),
-                              child: Container(
-                                color: Appcolors.kgreenColor.withOpacity(.15),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ResponsiveSizedBox.height10,
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        TextStyles.medium(
-                                          text: 'More Details',
-                                          color: Appcolors.kprimarycolor,
-                                          weight: FontWeight.bold,
+              return Dismissible(
+                key: Key(report.id.toString()),
+                onDismissed: (direction) async {
+                  await WaterPlantDatabaseHelper.instance
+                      .deleteWaterPlantData(report.id!);
+
+                  setState(() {
+                    reports.removeAt(index);
+                  });
+
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Report deleted successfully"),
+                      backgroundColor: Appcolors.kredColor,
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      left: ResponsiveUtils.wp(4),
+                      right: ResponsiveUtils.wp(4),
+                      top: ResponsiveUtils.wp(4)),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        expandedIndex = isExpanded ? null : index;
+                      });
+                    },
+                    child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            // Existing content
+                            Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.all(
+                                              ResponsiveUtils.wp(1.5)),
+                                          decoration: BoxDecoration(
+                                              color: Appcolors.kprimarycolor
+                                                  .withOpacity(.1)),
+                                          child: Text(
+                                            'Area Id : ${report.areaName}',
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: Appcolors.kblackColor,
+                                                fontSize: 12),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.start,
+                                          ),
                                         ),
-                                      ],
+                                      ),
+                                      ResponsiveSizedBox.width50,
+                                      ResponsiveSizedBox.width10,
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: Appcolors.kprimarycolor
+                                                .withOpacity(.1)),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: ResponsiveUtils.wp(3),
+                                              vertical:
+                                                  ResponsiveUtils.wp(1.5)),
+                                          child: Text(
+                                            'Root Id : ${report.routeName}',
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: Appcolors.kblackColor,
+                                                fontSize: 12),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  ResponsiveSizedBox.height20,
+                                  ResponsiveSizedBox.height5,
+                                  Row(
+                                    children: [
+                                      TextStyles.caption(
+                                          text:
+                                              'Date  : ${DateFormat('dd-MM-yyyy').format(DateTime.parse(report.createdAt))}',
+                                          color: Appcolors.kblackColor,
+                                          weight: FontWeight.bold),
+                                      const Spacer(),
+                                      TextStyles.caption(
+                                          text: 'Status :',
+                                          color: Appcolors.kblackColor,
+                                          weight: FontWeight.bold),
+                                      ResponsiveSizedBox.width10,
+                                      Container(
+                                        decoration: const BoxDecoration(
+                                            color: Appcolors.kredColor),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: ResponsiveUtils.wp(2),
+                                            vertical: ResponsiveUtils.wp(.8),
+                                          ),
+                                          child: TextStyles.caption(
+                                            text: 'Pending',
+                                            color: Appcolors.kwhiteColor,
+                                            weight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  ResponsiveSizedBox.height10,
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    height:
+                                        isExpanded ? ResponsiveUtils.hp(42) : 0,
+                                    curve: Curves.easeInOut,
+                                    child: SingleChildScrollView(
+                                      padding: EdgeInsets.only(
+                                          top: ResponsiveUtils.wp(2)),
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      child: Container(
+                                        color: Appcolors.kgreenColor
+                                            .withOpacity(.15),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ResponsiveSizedBox.height10,
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                TextStyles.medium(
+                                                  text: 'More Details',
+                                                  color:
+                                                      Appcolors.kprimarycolor,
+                                                  weight: FontWeight.bold,
+                                                ),
+                                              ],
+                                            ),
+                                            const Divider(
+                                              thickness: .5,
+                                              color: Appcolors.kprimarycolor,
+                                            ),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading: 'Revenue',
+                                                details: 'not available'),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading: 'Distance',
+                                                details: 'not available'),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading: 'Product Flow',
+                                                details:
+                                                    '${report.productFlow}'),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading: 'Coin Reading',
+                                                details:
+                                                    '${report.coinMeterReading}'),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading: 'Sand filter pressure',
+                                                details:
+                                                    '${report.sandFilterPressure}'),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading:
+                                                    'Carbon filter pressure',
+                                                details:
+                                                    '${report.carbonFilterPressure}'),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading: 'System pressure',
+                                                details:
+                                                    '${report.systemPressure}'),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading: 'Reject Flow',
+                                                details:
+                                                    '${report.rejectFlow}'),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading: 'TDS',
+                                                details: '${report.tds}'),
+                                            CustomLargeTextWidget(
+                                                context: context,
+                                                heading: 'KEB meter',
+                                                details:
+                                                    '${report.kebMeterReading}'),
+                                            ResponsiveSizedBox.height10
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                    const Divider(
-                                      thickness: .5,
-                                      color: Appcolors.kprimarycolor,
-                                    ),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'Revenue',
-                                        details: 'not available'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'Distance',
-                                        details: 'not available'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'Product Flow',
-                                        details: '${report.productFlow}'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'Coin Reading',
-                                        details: '${report.coinMeterReading}'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'Sand filter pressure',
-                                        details:
-                                            '${report.sandFilterPressure}'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'Carbon filter pressure',
-                                        details:
-                                            '${report.carbonFilterPressure}'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'System pressure',
-                                        details: '${report.systemPressure}'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'Reject Flow',
-                                        details: '${report.rejectFlow}'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'TDS',
-                                        details: '${report.tds}'),
-                                    CustomLargeTextWidget(
-                                        context: context,
-                                        heading: 'KEB meter',
-                                        details: '${report.kebMeterReading}'),
-                                    ResponsiveSizedBox.height10
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
 
-                    // Expandable section
-                  ],
-                )),
-          ),
-        );
-      },
-    );
+                            // Expandable section
+                          ],
+                        )),
+                  ),
+                ),
+              );
+            },
+          );
   }
 }

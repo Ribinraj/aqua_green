@@ -43,7 +43,9 @@ class WaterPlantDatabaseHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         unitId TEXT NOT NULL,
         areaId TEXT NOT NULL,
+        areaName TEXT NOT NULL,
         routeId TEXT NOT NULL,
+        routeName TEXT NOT NULL,
         latt TEXT NOT NULL,
         long TEXT NOT NULL,
         powerSupply TEXT,
@@ -122,7 +124,9 @@ class WaterPlantDatabaseHelper {
           id: map['id'],
           unitId: map['unitId'],
           areaId: map['areaId'],
+          areaName: map['areaName'],
           routeId: map['routeId'],
+          routeName: map['routeName'],
           latt: map['latt'],
           long: map['long'],
           powerSupply: map['powerSupply'],
@@ -162,7 +166,7 @@ class WaterPlantDatabaseHelper {
   }
 }
 
-///////////////
+// ///////////////
 class NetworkChecker {
   static Future<bool> hasNetwork() async {
     final connectivityResult = await Connectivity().checkConnectivity();

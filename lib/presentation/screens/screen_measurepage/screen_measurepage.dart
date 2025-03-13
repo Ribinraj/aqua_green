@@ -106,6 +106,8 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
   String? selectedRoute;
   String? selectedUnit;
   String? selectedArea;
+  // String? selectedAreaName;
+  // String? selectedRouteName;
   String selectedYesNo = 'YES';
   String? selectedProductFlow;
   String? selectedRejectFlow;
@@ -226,9 +228,9 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
               if (value == null || value.isEmpty) {
                 return 'TDS cannot be empty';
               }
-                 if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
-              return 'Enter a valid numeric value';
-            }
+              if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
+                return 'Enter a valid numeric value';
+              }
               return null;
             },
             controller: tdsController,
@@ -244,9 +246,9 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
               if (value == null || value.isEmpty) {
                 return 'Coin RO water reading cannot be empty';
               }
-                 if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
-              return 'Enter a valid numeric value';
-            }
+              if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
+                return 'Enter a valid numeric value';
+              }
               return null;
             },
             textInputType: TextInputType.number,
@@ -556,9 +558,12 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                       context.read<AddMeasurmentBloc>().add(
                           AddMeasurmentButtonclickEvent(
                               datas: WaterPlantDataModel(
+                                
                                   unitId: unitController.text,
                                   areaId: areaController.text,
+                                  areaName: selectedArea!,
                                   routeId: routeController.text,
+                                  routeName: selectedRoute!,
                                   latt: currentLocation.latitude.toString(),
                                   long: currentLocation.longitude.toString(),
                                   powerSupply: yesNoController.text,
@@ -620,9 +625,9 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
               if (value == null || value.isEmpty) {
                 return 'Coin RO water reading cannot be empty';
               }
-                 if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
-              return 'Enter a valid numeric value';
-            }
+              if (!RegExp(r'^\d+(\.\d{1,})?$').hasMatch(value)) {
+                return 'Enter a valid numeric value';
+              }
               return null;
             },
             textInputType: TextInputType.number,
@@ -802,7 +807,9 @@ class _ScreenMeasurepageState extends State<ScreenMeasurepage> {
                             datas: WaterPlantDataModel(
                                 unitId: unitController.text,
                                 areaId: areaController.text,
+                                areaName: selectedArea!,
                                 routeId: routeController.text,
+                                routeName: selectedRoute!,
                                 coinMeterReading:
                                     coin_roWateterReadingController.text,
                                 latt: currentLocation.latitude.toString(),

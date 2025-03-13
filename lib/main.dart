@@ -1,9 +1,11 @@
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
+import 'package:aqua_green/domain/database/download_routedatabaseHelpeerclass.dart';
 import 'package:aqua_green/domain/database/measurment_savedatabase.dart';
 import 'package:aqua_green/domain/repositories/login_repo.dart';
 import 'package:aqua_green/domain/repositories/measurments_repo.dart';
 import 'package:aqua_green/presentation/blocs/add_measurment/add_measurment_bloc.dart';
+import 'package:aqua_green/presentation/blocs/data_download_bloc/data_download_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_report_offline/fetch_report_offline_bloc.dart';
 import 'package:aqua_green/presentation/blocs/update_profile/update_profile_bloc.dart';
 import 'package:aqua_green/presentation/blocs/bottom_navigation_bloc/bottom_navigation_bloc.dart';
@@ -37,6 +39,7 @@ void main() {
   // });
 }
 
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -46,6 +49,7 @@ class MyApp extends StatelessWidget {
     ResponsiveUtils().init(context);
     final loginrepo = Loginrepo();
     final measurmentrepo = MeasurmentsRepo();
+    final datasyncservice=DataSyncService(repository: measurmentrepo,databaseHelper: DatabaseHelper.instance);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -76,13 +80,13 @@ class MyApp extends StatelessWidget {
           create: (context) => UpdatePasswordBloc(repository: loginrepo),
         ),
         BlocProvider(
-          create: (context) => FetchRouteBloc(repository: measurmentrepo),
+          create: (context) => FetchRouteBloc(repository: measurmentrepo,dataSyncService:datasyncservice),
         ),
         BlocProvider(
-          create: (context) => FetchAreaBloc(repository: measurmentrepo),
+          create: (context) => FetchAreaBloc(repository: measurmentrepo,dataSyncService: datasyncservice),
         ),
         BlocProvider(
-          create: (context) => FetchUnitBloc(repository: measurmentrepo),
+          create: (context) => FetchUnitBloc(repository: measurmentrepo,dataSyncService: datasyncservice),
         ),
         BlocProvider(
           create: (context) => UpdateUnitsBloc(repository: measurmentrepo),
@@ -99,8 +103,15 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => UpdateProfileBloc(repository: loginrepo),
         ),
-         BlocProvider(
-          create: (context) => FetchReportOfflineBloc(waterplantdatabasehelper: WaterPlantDatabaseHelper.instance),
+        BlocProvider(
+          create: (context) => FetchReportOfflineBloc(
+              waterplantdatabasehelper: WaterPlantDatabaseHelper.instance),
+        ),
+        BlocProvider(
+          create: (context) => DataDownloadBloc(
+              dataSyncService: DataSyncService(
+                  repository: measurmentrepo,
+                  databaseHelper: DatabaseHelper.instance)),
         ),
       ],
       child: MaterialApp(

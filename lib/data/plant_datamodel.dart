@@ -109,7 +109,9 @@ class WaterPlantDataModel {
   int? id;
   String unitId;
   String areaId;
+  String areaName;
   String routeId;
+  String routeName;
   String latt;
   String long;
   String? powerSupply;
@@ -129,7 +131,10 @@ class WaterPlantDataModel {
     this.id,
     required this.unitId,
     required this.areaId,
+    required this.areaName,
+
     required this.routeId,
+    required this.routeName,
     required this.latt,
     required this.long,
     this.powerSupply,
@@ -152,7 +157,9 @@ class WaterPlantDataModel {
         id: json["id"] ?? '',
         unitId: json["unitId"] ?? '',
         areaId: json["areaId"] ?? '',
+        areaName: json["areaName"] ?? '',
         routeId: json["routeId"] ?? '',
+        routeName: json["routeName"] ?? '',
         latt: json["latt"] ?? '',
         long: json["long"] ?? '',
         powerSupply: json["powerSupply"] ?? '',
@@ -174,7 +181,9 @@ class WaterPlantDataModel {
         "id": id,
         "unitId": unitId,
         "areaId": areaId,
+        "areaName": areaName,
         "routeId": routeId,
+        "routeName": routeName,
         "latt": latt,
         "long": long,
         "powerSupply": powerSupply,

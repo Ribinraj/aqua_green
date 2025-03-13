@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:aqua_green/data/route_model.dart';
+import 'package:aqua_green/domain/database/download_routedatabaseHelpeerclass.dart';
 import 'package:aqua_green/domain/repositories/measurments_repo.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,9 @@ part 'fetch_route_state.dart';
 
 class FetchRouteBloc extends Bloc<FetchRouteEvent, FetchRouteState> {
   final MeasurmentsRepo repository;
-  FetchRouteBloc({required this.repository}) : super(FetchRouteInitial()) {
+  final DataSyncService dataSyncService;
+  FetchRouteBloc({required this.dataSyncService, required this.repository})
+      : super(FetchRouteInitial()) {
     on<FetchRouteEvent>((event, emit) {});
     on<FetchRouteInitialEvent>(fetchroute);
   }
@@ -19,11 +22,15 @@ class FetchRouteBloc extends Bloc<FetchRouteEvent, FetchRouteState> {
   FutureOr<void> fetchroute(
       FetchRouteInitialEvent event, Emitter<FetchRouteState> emit) async {
     emit(FetchRouteLoadingState());
-    final response = await repository.fetcchroutes();
-    if (!response.error && response.status == 200) {
-      emit(FetchRouteSuccessState(routes: response.data!));
-    } else {
-      emit(FetchRouteErrorState(message: response.message));
+    final response = await dataSyncService.getLocalRoutes();
+    if (response.isNotEmpty) {
+      emit(FetchRouteSuccessState(routes: response));
+    }
+    // if (!response.error && response.status == 200) {
+    //   emit(FetchRouteSuccessState(routes: response.data!));
+    // }
+    else {
+      emit(FetchRouteErrorState(message:'No units Downloaded'));
     }
   }
 }
