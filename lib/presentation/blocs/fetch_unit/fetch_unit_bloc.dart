@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:aqua_green/data/unit_model.dart';
 import 'package:aqua_green/domain/database/download_routedatabaseHelpeerclass.dart';
-import 'package:aqua_green/domain/repositories/measurments_repo.dart';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -10,10 +10,10 @@ part 'fetch_unit_event.dart';
 part 'fetch_unit_state.dart';
 
 class FetchUnitBloc extends Bloc<FetchUnitEvent, FetchUnitState> {
-  final MeasurmentsRepo repository;
+  //final MeasurmentsRepo repository;
   final DataSyncService dataSyncService;
   List<UnitModel> allunits = [];
-  FetchUnitBloc( {required this.dataSyncService,required this.repository}) : super(FetchUnitInitial()) {
+  FetchUnitBloc( {required this.dataSyncService}) : super(FetchUnitInitial()) {
     on<FetchUnitEvent>((event, emit) {});
     on<FetchUnitInitialEvent>(fetchunit);
     on<FetchUnitWithRouteIdandAreaId>(fetchfilteredunit);

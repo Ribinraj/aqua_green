@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/urls.dart';
 import 'package:aqua_green/data/area_model.dart';
 import 'package:aqua_green/data/plant_datamodel.dart';
@@ -273,8 +274,19 @@ class MeasurmentsRepo {
     }
   }
 
-  Future<void> syncPendingData() async {
-    if (!await NetworkChecker.hasNetwork()) return;
+  Future<void> syncPendingData(BuildContext
+   context) async {
+    if (!await NetworkChecker.hasNetwork()){
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please turn on your network"),
+          backgroundColor: Appcolors.kredColor,
+        ),
+      );
+    }
+    return;
+  }
     final pendingData = await waterPlantDatabaseHelper.getStoredData();
     if (pendingData.isEmpty) return;
     SyncProgress().startSync(pendingData.length);

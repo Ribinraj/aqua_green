@@ -488,6 +488,9 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
   final TextEditingController routeController = TextEditingController();
   final TextEditingController areaController = TextEditingController();
   final TextEditingController unitController = TextEditingController();
+  Key routeDropdownKey = UniqueKey();
+  Key areaDropdownKey = UniqueKey();
+  Key unitDropdownKey = UniqueKey();
 
   String? selectedRoute;
   String? selectedArea;
@@ -566,6 +569,9 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
               routeController.clear();
               areaController.clear();
               unitController.clear();
+                  routeDropdownKey = UniqueKey();
+    areaDropdownKey = UniqueKey();
+    unitDropdownKey = UniqueKey();
             });
     context.read<DataDownloadBloc>().add(RefreshAllDataEvent());
   }
@@ -615,6 +621,9 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
               routeController.clear();
               areaController.clear();
               unitController.clear();
+                  routeDropdownKey = UniqueKey();
+    areaDropdownKey = UniqueKey();
+    unitDropdownKey = UniqueKey();
             });
             _loadInitialData();
             CustomSnackBar.show(
@@ -772,6 +781,7 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
               );
             } else if (state is FetchRouteSuccessState) {
               return DropdownButtonFormField2<RouteModel>(
+                key: routeDropdownKey,
                 value: selectedRouteModel,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 5),
@@ -878,6 +888,7 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
                 return DisabledDropdown(hintText: 'No areas Available');
               }
               return DropdownButtonFormField2<AreaModel>(
+                key: areaDropdownKey,
                 value: selectedAreaModel,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 5),
@@ -982,6 +993,7 @@ class _ScreenUpdateUnitsState extends State<ScreenUpdateUnits> {
                 return DisabledDropdown(hintText: 'No units Available');
               }
               return DropdownButtonFormField2<UnitModel>(
+                key: areaDropdownKey,
                 value: selectedUnitModel,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 5),

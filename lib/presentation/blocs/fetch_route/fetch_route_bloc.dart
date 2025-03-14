@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:aqua_green/data/route_model.dart';
 import 'package:aqua_green/domain/database/download_routedatabaseHelpeerclass.dart';
-import 'package:aqua_green/domain/repositories/measurments_repo.dart';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
@@ -11,9 +11,9 @@ part 'fetch_route_event.dart';
 part 'fetch_route_state.dart';
 
 class FetchRouteBloc extends Bloc<FetchRouteEvent, FetchRouteState> {
-  final MeasurmentsRepo repository;
+  //final MeasurmentsRepo repository;
   final DataSyncService dataSyncService;
-  FetchRouteBloc({required this.dataSyncService, required this.repository})
+  FetchRouteBloc({required this.dataSyncService})
       : super(FetchRouteInitial()) {
     on<FetchRouteEvent>((event, emit) {});
     on<FetchRouteInitialEvent>(fetchroute);

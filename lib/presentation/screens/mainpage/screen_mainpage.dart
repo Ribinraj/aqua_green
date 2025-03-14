@@ -1,6 +1,6 @@
 import 'package:aqua_green/presentation/blocs/bottom_navigation_bloc/bottom_navigation_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_profile/fetch_profile_bloc.dart';
-import 'package:aqua_green/presentation/screens/connectivity_page/connectivity_page.dart';
+
 import 'package:aqua_green/presentation/screens/mainpage/widgets/customnavbar.dart';
 import 'package:aqua_green/presentation/screens/screen_homepage/screen_homepage.dart';
 import 'package:aqua_green/presentation/screens/screen_measurepage/screen_measurepage.dart';

@@ -1,20 +1,20 @@
-part of 'connectivity_bloc.dart';
+// part of 'connectivity_bloc.dart';
 
-@immutable
-sealed class ConnectivityState {}
+// @immutable
+// sealed class ConnectivityState {}
 
-final class ConnectivityInitial extends ConnectivityState {}
+// final class ConnectivityInitial extends ConnectivityState {}
 
-final class ConnectivitySuccess extends ConnectivityState {
-  final List<ConnectivityResult> results;
+// final class ConnectivitySuccess extends ConnectivityState {
+//   final List<ConnectivityResult> results;
 
-  ConnectivitySuccess({required this.results});
-}
+//   ConnectivitySuccess({required this.results});
+// }
 
-class ConnectivityFailure extends ConnectivityState {}
+// class ConnectivityFailure extends ConnectivityState {}
 
-class ConnectivityRestored extends ConnectivityState {
-  final List<ConnectivityResult> results;
+// class ConnectivityRestored extends ConnectivityState {
+//   final List<ConnectivityResult> results;
 
-  ConnectivityRestored({required this.results});
-}
+//   ConnectivityRestored({required this.results});
+// }

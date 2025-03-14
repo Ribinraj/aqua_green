@@ -352,7 +352,7 @@ class _ScreenReportpageState extends State<ScreenReportpage>
           ? FloatingActionButton(
               elevation: 0,
               onPressed: () async {
-                await MeasurmentsRepo().syncPendingData();
+                await MeasurmentsRepo().syncPendingData(context);
                 BlocProvider.of<FetchReportOfflineBloc>(context)
                     .add(FetchReportOfflineInitialEvent());
               },
@@ -622,6 +622,83 @@ class _ScreenReportpageState extends State<ScreenReportpage>
 
               return Dismissible(
                 key: Key(report.id.toString()),
+                background: Container(
+                  color: Appcolors.kwhiteColor,
+                  alignment: Alignment.centerRight,
+                  padding: EdgeInsets.only(right: ResponsiveUtils.wp(5)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.delete,
+                        color: Appcolors.kredColor,
+                        size: ResponsiveUtils.wp(10),
+                      ),
+                      SizedBox(width: ResponsiveUtils.wp(3)),
+                      TextStyles.caption(
+                        text: 'Swipe to delete',
+                        color: Appcolors.kredColor,
+                        weight: FontWeight.bold,
+                      ),
+                    ],
+                  ),
+                ),
+                direction: DismissDirection.endToStart,
+                confirmDismiss: (direction) async {
+                  // Show confirmation dialog
+                  return await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        title: Row(
+                          children: [
+                            const Icon(
+                              Icons.warning,
+                              color: Appcolors.kredColor,
+                              size: 20,
+                            ),
+                            SizedBox(width: ResponsiveUtils.wp(2)),
+                            TextStyles.body(
+                                text: 'Delete Report', weight: FontWeight.bold),
+                          ],
+                        ),
+                        content: TextStyles.caption(
+                            text:
+                                'Are you sure you want to delete this report?',
+                            weight: FontWeight.bold),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Appcolors.kblackColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(
+                                color: Appcolors.kredColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
                 onDismissed: (direction) async {
                   await WaterPlantDatabaseHelper.instance
                       .deleteWaterPlantData(report.id!);

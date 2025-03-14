@@ -9,7 +9,7 @@ import 'package:aqua_green/presentation/blocs/data_download_bloc/data_download_b
 import 'package:aqua_green/presentation/blocs/fetch_report_offline/fetch_report_offline_bloc.dart';
 import 'package:aqua_green/presentation/blocs/update_profile/update_profile_bloc.dart';
 import 'package:aqua_green/presentation/blocs/bottom_navigation_bloc/bottom_navigation_bloc.dart';
-import 'package:aqua_green/presentation/blocs/connectivity_bloc/connectivity_bloc.dart';
+
 import 'package:aqua_green/presentation/blocs/cubit/toggle_password_cubit.dart';
 import 'package:aqua_green/presentation/blocs/fetch_area/fetch_area_bloc.dart';
 import 'package:aqua_green/presentation/blocs/fetch_profile/fetch_profile_bloc.dart';
@@ -26,19 +26,23 @@ import 'package:aqua_green/presentation/blocs/verify_otpbloc/verify_otp_bloc.dar
 import 'package:aqua_green/presentation/screens/splash_page/screen_splashpage.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(const MyApp());
-  // Connectivity().onConnectivityChanged.listen((results) {
-  //   if (results.contains(ConnectivityResult.mobile) ||
-  //       results.contains(ConnectivityResult.wifi)) {
-  //     MeasurmentsRepo().syncPendingData();
-  //   }
-  // });
-}
+// void main() {
+//   runApp(const MyApp());
 
+// }
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_) {
+    runApp(const MyApp());
+  });
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -61,9 +65,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => ImagePickerBloc(),
         ),
-        BlocProvider(
-          create: (context) => ConnectivityBloc(),
-        ),
+        // BlocProvider(
+        //   create: (context) => ConnectivityBloc(),
+        // ),
         BlocProvider(
           create: (context) => LoginBloc(repository: loginrepo),
         ),
@@ -80,13 +84,13 @@ class MyApp extends StatelessWidget {
           create: (context) => UpdatePasswordBloc(repository: loginrepo),
         ),
         BlocProvider(
-          create: (context) => FetchRouteBloc(repository: measurmentrepo,dataSyncService:datasyncservice),
+          create: (context) => FetchRouteBloc(dataSyncService:datasyncservice),
         ),
         BlocProvider(
-          create: (context) => FetchAreaBloc(repository: measurmentrepo,dataSyncService: datasyncservice),
+          create: (context) => FetchAreaBloc(dataSyncService: datasyncservice),
         ),
         BlocProvider(
-          create: (context) => FetchUnitBloc(repository: measurmentrepo,dataSyncService: datasyncservice),
+          create: (context) => FetchUnitBloc(dataSyncService: datasyncservice),
         ),
         BlocProvider(
           create: (context) => UpdateUnitsBloc(repository: measurmentrepo),

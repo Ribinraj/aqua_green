@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:aqua_green/data/area_model.dart';
 import 'package:aqua_green/domain/database/download_routedatabaseHelpeerclass.dart';
-import 'package:aqua_green/domain/repositories/measurments_repo.dart';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -10,10 +10,10 @@ part 'fetch_area_event.dart';
 part 'fetch_area_state.dart';
 
 class FetchAreaBloc extends Bloc<FetchAreaEvent, FetchAreaState> {
-  final MeasurmentsRepo repository;
+ // final MeasurmentsRepo repository;
   final DataSyncService dataSyncService;
   List<AreaModel> allareas = [];
-  FetchAreaBloc({required this.dataSyncService, required this.repository})
+  FetchAreaBloc({required this.dataSyncService})
       : super(FetchAreaInitial()) {
     on<FetchAreaEvent>((event, emit) {});
     on<FetchAreaInitialEvent>(fetcharea);
