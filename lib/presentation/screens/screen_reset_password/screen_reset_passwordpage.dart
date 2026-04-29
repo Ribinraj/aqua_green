@@ -1,3 +1,4 @@
+import 'package:aqua_green/core/appconstants.dart';
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
@@ -53,14 +54,15 @@ class _ScreenSigninPageState extends State<ScreenResetPasswordpage> {
                       ),
                   child: Center(
                     child: Container(
-                      height: ResponsiveUtils.hp(15),
+                        height: ResponsiveUtils.wp(40),
+                      // height: ResponsiveUtils.hp(15),
                       width: ResponsiveUtils.wp(40),
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
-                            'assets/images/Aqua Green Logos-updated.png',
+                         Appconstants.logo,
                           ),
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -94,14 +96,14 @@ class _ScreenSigninPageState extends State<ScreenResetPasswordpage> {
                 ResponsiveSizedBox.height10,
                 CustomTextfield(
                   validator: (value) {
-    if (value == null || value.isEmpty) {
-      return "Confirm Password cannot be empty";
-    }
-    if (value != passwordController.text) {
-      return "Passwords do not match";
-    }
-    return null;
-  },
+                    if (value == null || value.isEmpty) {
+                      return "Confirm Password cannot be empty";
+                    }
+                    if (value != passwordController.text) {
+                      return "Passwords do not match";
+                    }
+                    return null;
+                  },
                   controller: confirompasswordController,
                   labelText: 'Confirm Password',
                 ),
@@ -126,7 +128,7 @@ class _ScreenSigninPageState extends State<ScreenResetPasswordpage> {
                   },
                   builder: (context, state) {
                     if (state is UpdatePasswordLoadingState) {
-                     return Container(
+                      return Container(
                         height: ResponsiveUtils.hp(6),
                         width: ResponsiveUtils.screenWidth,
                         color: Appcolors.kprimarycolor,
@@ -139,11 +141,11 @@ class _ScreenSigninPageState extends State<ScreenResetPasswordpage> {
                     }
                     return SubmitButton(
                         ontap: () {
-                           if (formKey.currentState!.validate()) {
-                          context.read<UpdatePasswordBloc>().add(
-                              UpdatePasswordButtonClickEvent(
-                                  userId: widget.userId,
-                                  password: confirompasswordController.text));
+                          if (formKey.currentState!.validate()) {
+                            context.read<UpdatePasswordBloc>().add(
+                                UpdatePasswordButtonClickEvent(
+                                    userId: widget.userId,
+                                    password: confirompasswordController.text));
                           } else {
                             CustomSnackBar.show(
                                 context: context,
@@ -151,8 +153,6 @@ class _ScreenSigninPageState extends State<ScreenResetPasswordpage> {
                                 message: 'Fill all fields',
                                 contentType: ContentType.failure);
                           }
-                          
-                        
                         },
                         text: 'Submit');
                   },

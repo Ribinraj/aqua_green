@@ -1,3 +1,4 @@
+import 'package:aqua_green/core/appconstants.dart';
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
@@ -57,14 +58,15 @@ class _ScreenSigninPageState extends State<ScreenSigninPage> {
                       ),
                   child: Center(
                     child: Container(
-                      height: ResponsiveUtils.hp(15),
+                        height: ResponsiveUtils.wp(40),
+                      // height: ResponsiveUtils.hp(15),
                       width: ResponsiveUtils.wp(40),
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(
-                            'assets/images/Aqua Green Logos-updated.png',
+                         Appconstants.logo,
                           ),
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),

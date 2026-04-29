@@ -1,3 +1,4 @@
+import 'package:aqua_green/core/appconstants.dart';
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
@@ -32,22 +33,39 @@ class _ScreenSplashPageState extends State<ScreenSplashPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              height: ResponsiveUtils.hp(20),
+                Container(
+                 
+              height: ResponsiveUtils.wp(45),
               width: ResponsiveUtils.wp(45),
               decoration: const BoxDecoration(
+                shape: BoxShape.circle,
                 image: DecorationImage(
                   image:
-                      AssetImage('assets/images/Aqua Green Logos-updated.png'),
-                  fit: BoxFit.contain,
+                      AssetImage(Appconstants.logo),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            ResponsiveSizedBox.height20,
-            SpinKitCircle(
-              color: Appcolors.kgreenColor,
-              size: ResponsiveUtils.wp(10),
-            )
+            // Container(
+            //   height: ResponsiveUtils.hp(20),
+            //   width: ResponsiveUtils.wp(45),
+            //   decoration: const BoxDecoration(
+            //     image: DecorationImage(
+            //       image:
+            //           AssetImage(Appconstants.logo),
+            //       fit: BoxFit.contain,
+            //     ),
+            //   ),
+            // ),
+            ResponsiveSizedBox.height50,
+                SpinKitThreeBounce(
+                          size: 20,
+                          color: const Color.fromARGB(255, 9, 47, 86),
+                        ),
+            // SpinKitCircle(
+            //   color: Appcolors.kgreenColor,
+            //   size: ResponsiveUtils.wp(10),
+            // )
           ],
         ),
       ),

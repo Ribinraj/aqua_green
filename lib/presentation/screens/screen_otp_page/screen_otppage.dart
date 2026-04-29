@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aqua_green/core/appconstants.dart';
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
@@ -134,18 +135,31 @@ class _ScreenOtppageState extends State<ScreenOtppage> {
                 //     bottomRight: Radius.circular(30))
                 ),
             child: Center(
-              child: Container(
-                height: ResponsiveUtils.hp(15),
-                width: ResponsiveUtils.wp(40),
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/images/Aqua Green Logos-updated.png',
+              child:  Container(
+                        height: ResponsiveUtils.wp(40),
+                      // height: ResponsiveUtils.hp(15),
+                      width: ResponsiveUtils.wp(40),
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                         Appconstants.logo,
+                          ),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+              // child: Container(
+              //   height: ResponsiveUtils.hp(15),
+              //   width: ResponsiveUtils.wp(40),
+              //   decoration: const BoxDecoration(
+              //     image: DecorationImage(
+              //       image: AssetImage(
+              //        Appconstants.logo,
+              //       ),
+              //       fit: BoxFit.cover,
+              //     ),
+              //   ),
+              // ),
             ),
           ),
           ResponsiveSizedBox.height30,

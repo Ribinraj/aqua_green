@@ -1,3 +1,4 @@
+import 'package:aqua_green/core/appconstants.dart';
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
@@ -25,7 +26,7 @@ class CustomDrawer extends StatelessWidget {
                 width: ResponsiveUtils.wp(30),
                 height: ResponsiveUtils.hp(15),
                 child: Image.asset(
-                  'assets/images/Aqua Green Logos-updated.png',
+                 Appconstants.logo,
                   fit: BoxFit.contain,
                 ),
               ),

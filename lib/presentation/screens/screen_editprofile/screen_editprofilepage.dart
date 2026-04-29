@@ -1,3 +1,4 @@
+import 'package:aqua_green/core/appconstants.dart';
 import 'package:aqua_green/core/colors.dart';
 import 'package:aqua_green/core/constants.dart';
 import 'package:aqua_green/core/responsive_utils.dart';
@@ -70,7 +71,7 @@ class _ScreenEditProfilepageState extends State<ScreenEditProfilepage> {
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage(
-                        'assets/images/Aqua Green Logos-updated.png',
+                       Appconstants.logo,
                       ),
                       fit: BoxFit.contain,
                     ),
